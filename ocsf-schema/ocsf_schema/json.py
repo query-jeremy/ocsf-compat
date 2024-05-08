@@ -47,9 +47,23 @@ def names_to_keys(d: dict[str, Any]) -> dict[str, Any]:
     return d
 
 
-def decode(data: str) -> OcsfSchema:
-    return from_dict(OcsfSchema, keys_to_names(json.loads(data)))
+def from_json(data: str) -> OcsfSchema:
+    return from_dict(OcsfSchema, keys_to_names(json.loads(data))) # type: ignore
 
 
-def encode(schema: OcsfSchema) -> str:
-    return json.dumps(names_to_keys(asdict(schema)))
+def to_dict(schema: OcsfSchema) -> dict[str, Any]:
+    return names_to_keys(asdict(schema))
+
+
+def to_json(schema: OcsfSchema) -> str:
+    return json.dumps(to_dict(schema))
+
+
+def from_file(path: str) -> OcsfSchema:
+    with open(path, "r") as f:
+        return from_json(f.read())
+
+
+def to_file(schema: OcsfSchema, path: str) -> None:
+    with open(path, "w") as f:
+        f.write(to_json(schema))

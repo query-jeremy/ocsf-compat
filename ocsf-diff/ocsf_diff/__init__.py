@@ -1,4 +1,4 @@
-from .diff import compare
+from .compare import compare
 from .model import (
     DiffAttr,
     DiffAttributes,

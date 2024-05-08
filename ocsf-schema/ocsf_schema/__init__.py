@@ -1,4 +1,4 @@
-from .json import decode, encode
+from .json import from_json, to_json, to_dict, from_file, to_file 
 from .model import (
     OcsfAttr,
     OcsfAttributes,
@@ -22,8 +22,11 @@ from .model import (
 )
 
 __all__ = [
-    "encode",
-    "decode",
+    "from_json",
+    "to_json",
+    "to_dict",
+    "from_file",
+    "to_file",
     "OcsfEnumValue",
     "OcsfName",
     "OcsfVersion",
