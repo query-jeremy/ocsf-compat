@@ -1,9 +1,14 @@
-"""Compare OCSF schemata.
+"""Compare OCSF schemata."""
 
-
-"""
-
-from typing import Any, Optional, TypeVar, Union, get_args, get_type_hints, get_origin, overload
+from typing import (
+    Optional,
+    TypeVar,
+    Union,
+    get_args,
+    get_type_hints,
+    get_origin,
+    overload,
+)
 
 from ocsf_schema.model import (
     OcsfName,
@@ -19,6 +24,8 @@ from ocsf_schema.model import (
     OcsfProfile,
     OcsfExtension,
     OcsfVersion,
+    OcsfEnumMember,
+    OcsfDictionaryTypes,
 )
 from ocsf_diff.model import (
     Difference,
@@ -26,6 +33,8 @@ from ocsf_diff.model import (
     Removal,
     Change,
     NoChange,
+    OcsfComparable,
+    COMPARABLE_TYPES,
     DiffSchema,
     DiffEvent,
     DiffObject,
@@ -38,10 +47,14 @@ from ocsf_diff.model import (
     DiffProfile,
     DiffExtension,
     DiffVersion,
+    DiffEnumMember,
+    DiffDictionaryTypes,
 )
 from ocsf_diff.factory import create_diff
 
 AnyT = TypeVar("AnyT")
+
+
 def _compare_primitive(old: AnyT, new: AnyT) -> Difference[AnyT]:
     if old == new:
         return NoChange[AnyT]()
@@ -53,10 +66,9 @@ def _compare_primitive(old: AnyT, new: AnyT) -> Difference[AnyT]:
         return Change[AnyT](before=old, after=new)
 
 
-_MODEL_TYPES = get_args(OcsfModel)
-
+# TODO type signature for Union and other special forms
 def _find_ocsf_type(t: type) -> type | None:
-    if t in _MODEL_TYPES:
+    if t in COMPARABLE_TYPES:
         return t
 
     t_origin = get_origin(t)
@@ -68,13 +80,12 @@ def _find_ocsf_type(t: type) -> type | None:
 
     return None
 
-# @overload
-# def compare(old: OcsfSchema, new: OcsfSchema) -> DiffSchema: ...
 
-OcsfT = TypeVar("OcsfT", bound=OcsfModel)
-
-def _compare_dict(old_val: Optional[dict[OcsfName, OcsfT]], new_val: Optional[dict[OcsfName, OcsfT]]) -> dict[OcsfName, Difference[OcsfT]]:
-    diff_dict: dict[OcsfName, Difference[OcsfT]] = {}
+def _compare_dict(
+    old_val: Optional[dict[OcsfName, OcsfComparable]],
+    new_val: Optional[dict[OcsfName, OcsfComparable]],
+) -> dict[OcsfName, Difference[OcsfComparable]]:
+    diff_dict: dict[OcsfName, Difference[OcsfComparable]] = {}
 
     old_d = old_val if old_val is not None else {}
     new_d = new_val if new_val is not None else {}
@@ -87,16 +98,68 @@ def _compare_dict(old_val: Optional[dict[OcsfName, OcsfT]], new_val: Optional[di
             diff_dict[key] = Addition(after=new_d[key])
         elif old_d[key] == new_d[key]:
             diff_dict[key] = NoChange()
-        elif isinstance(old_d[key], OcsfModel) and isinstance(
-            new_d[key], OcsfModel
-        ):
+        elif isinstance(old_d[key], OcsfModel) and isinstance(new_d[key], OcsfModel):
             diff_dict[key] = compare(old_d[key], new_d[key])
         else:
             diff_dict[key] = _compare_primitive(old_d[key], new_d[key])
 
     return diff_dict
 
-def compare(old_model: OcsfT, new_model: OcsfT) -> Difference[OcsfT]:
+
+@overload
+def compare(old_model: OcsfAttr, new_model: OcsfAttr) -> DiffAttr: ...
+
+
+@overload
+def compare(old_model: OcsfSchema, new_model: OcsfSchema) -> DiffSchema: ...
+
+
+@overload
+def compare(old_model: OcsfEvent, new_model: OcsfEvent) -> DiffEvent: ...
+
+
+@overload
+def compare(old_model: OcsfObject, new_model: OcsfObject) -> DiffObject: ...
+
+
+@overload
+def compare(
+    old_model: OcsfDeprecationInfo, new_model: OcsfDeprecationInfo
+) -> DiffDeprecationInfo: ...
+
+
+@overload
+def compare(old_model: OcsfDictionary, new_model: OcsfDictionary) -> DiffDictionary: ...
+
+
+@overload
+def compare(old_model: OcsfCategories, new_model: OcsfCategories) -> DiffCategories: ...
+
+
+@overload
+def compare(old_model: OcsfInclude, new_model: OcsfInclude) -> DiffInclude: ...
+
+
+@overload
+def compare(old_model: OcsfProfile, new_model: OcsfProfile) -> DiffProfile: ...
+
+
+@overload
+def compare(old_model: OcsfExtension, new_model: OcsfExtension) -> DiffExtension: ...
+
+
+@overload
+def compare(old_model: OcsfVersion, new_model: OcsfVersion) -> DiffVersion: ...
+
+
+@overload
+def compare(old_model: OcsfEnumMember, new_model: OcsfEnumMember) -> DiffEnumMember: ...
+
+@overload
+def compare(old_model: OcsfDictionaryTypes, new_model: OcsfDictionaryTypes) -> DiffDictionaryTypes: ...
+
+
+def compare(old_model: OcsfComparable, new_model: OcsfComparable) -> DiffModel:
     diff = create_diff(old_model)
     hints = get_type_hints(old_model)
 
@@ -108,8 +171,10 @@ def compare(old_model: OcsfT, new_model: OcsfT) -> Difference[OcsfT]:
         # Scenarios
         # 1. Two OCSF models (recurse)
         if isinstance(old_val, OcsfModel) and isinstance(new_val, OcsfModel):
+            assert type(old_val) == type(new_val)
+            assert type(old_val) in COMPARABLE_TYPES
             setattr(diff, attr, compare(old_val, new_val))
-        
+
         # 2. One OCSF model, one None (optional) - Add/Remove
         elif isinstance(old_val, OcsfModel) or isinstance(new_val, OcsfModel):
             if old_val is None:
@@ -120,11 +185,13 @@ def compare(old_model: OcsfT, new_model: OcsfT) -> Difference[OcsfT]:
                 raise ValueError(f"Unexpected union type for {attr}")
 
         # 3. dict[str, OcsfModel] or Optional[dict[str, OcsfModel]]
-        elif ocsf_type is not None and (isinstance(old_val, dict) or isinstance(new_val, dict)):
+        elif ocsf_type is not None and (
+            isinstance(old_val, dict) or isinstance(new_val, dict)
+        ):
             # We know that model.py doesn't have any properties that would cause
             # problems with the line below, so type checking is disabled. But
             # there's probably a way to enable it and get the desired result.
-            setattr(diff, attr, _compare_dict(old_val, new_val)) # type: ignore
+            setattr(diff, attr, _compare_dict(old_val, new_val))  # type: ignore
 
         # 4. everything else
         else:

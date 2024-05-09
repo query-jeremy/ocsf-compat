@@ -15,7 +15,7 @@ this should get the point across.
 """
 import os
 
-from ocsf_schema import decode
+from ocsf_schema import from_file
 from ocsf_diff import compare, Change, Removal, DiffEvent, DiffAttr
 
 
@@ -26,10 +26,10 @@ NEW_JSON = os.path.join(LOCATION, "../tests/schema-1.3.0-dev.json")
 
 
 with open(OLD_JSON, "r") as f:
-    old_schema = decode(f.read())
+    old_schema = from_file(f.read())
 
 with open(NEW_JSON, "r") as f: 
-    new_schema = decode(f.read())
+    new_schema = from_file(f.read())
 
 assert old_schema is not None
 assert new_schema is not None

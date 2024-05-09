@@ -6,8 +6,8 @@ from ocsf_schema.model import (
     OcsfObject,
     OcsfAttr,
     OcsfDeprecationInfo,
-    OcsfModel,
     OcsfDictionary,
+    OcsfDictionaryTypes,
     OcsfCategories,
     OcsfInclude,
     OcsfProfile,
@@ -23,12 +23,14 @@ from ocsf_diff.model import (
     DiffDeprecationInfo,
     DiffModel,
     DiffDictionary,
+    DiffDictionaryTypes,
     DiffCategories,
     DiffInclude,
     DiffProfile,
     DiffExtension,
     DiffVersion,
     DiffEnumMember,
+    OcsfComparable,
 )
 
 
@@ -79,11 +81,12 @@ def create_diff(model: OcsfVersion) -> DiffVersion: ...
 @overload
 def create_diff(model: OcsfEnumMember) -> DiffEnumMember: ...
 
+
 @overload
-def create_diff(model: OcsfModel) -> DiffModel: ...
+def create_diff(model: OcsfDictionaryTypes) -> DiffDictionaryTypes: ...
 
 
-def create_diff(model: OcsfModel) -> DiffModel:
+def create_diff(model: OcsfComparable) -> DiffModel:
     match model:
         case OcsfSchema():
             return DiffSchema()
@@ -109,6 +112,5 @@ def create_diff(model: OcsfModel) -> DiffModel:
             return DiffVersion()
         case OcsfEnumMember():
             return DiffEnumMember()
-        case _:
-            t = type(model)
-            raise ValueError(f"Unrecognized model type: {t}")
+        case OcsfDictionaryTypes():
+            return DiffDictionaryTypes()
