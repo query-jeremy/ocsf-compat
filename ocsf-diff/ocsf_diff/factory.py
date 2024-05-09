@@ -21,7 +21,7 @@ from ocsf_diff.model import (
     DiffObject,
     DiffAttr,
     DiffDeprecationInfo,
-    DiffModel,
+    ChangedModel,
     DiffDictionary,
     DiffDictionaryTypes,
     DiffCategories,
@@ -86,7 +86,7 @@ def create_diff(model: OcsfEnumMember) -> DiffEnumMember: ...
 def create_diff(model: OcsfDictionaryTypes) -> DiffDictionaryTypes: ...
 
 
-def create_diff(model: OcsfComparable) -> DiffModel:
+def create_diff(model: OcsfComparable) -> ChangedModel[OcsfComparable]:
     match model:
         case OcsfSchema():
             return DiffSchema()

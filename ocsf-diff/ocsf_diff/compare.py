@@ -1,7 +1,7 @@
 """Compare OCSF schemata."""
 
+from types import UnionType
 from typing import (
-    Optional,
     TypeVar,
     Union,
     get_args,
@@ -33,14 +33,15 @@ from ocsf_diff.model import (
     Removal,
     Change,
     NoChange,
+    ChangedModel,
     OcsfComparable,
+    OcsfComparableU,
     COMPARABLE_TYPES,
     DiffSchema,
     DiffEvent,
     DiffObject,
     DiffAttr,
     DiffDeprecationInfo,
-    DiffModel,
     DiffDictionary,
     DiffCategories,
     DiffInclude,
@@ -67,8 +68,8 @@ def _compare_primitive(old: AnyT, new: AnyT) -> Difference[AnyT]:
 
 
 # TODO type signature for Union and other special forms
-def _find_ocsf_type(t: type) -> type | None:
-    if t in COMPARABLE_TYPES:
+def _find_ocsf_type(t: type | UnionType) -> type | None:
+    if not isinstance(t, UnionType) and t in COMPARABLE_TYPES:
         return t
 
     t_origin = get_origin(t)
@@ -81,27 +82,118 @@ def _find_ocsf_type(t: type) -> type | None:
     return None
 
 
+@overload
 def _compare_dict(
-    old_val: Optional[dict[OcsfName, OcsfComparable]],
-    new_val: Optional[dict[OcsfName, OcsfComparable]],
+    old_val: dict[OcsfName, OcsfDictionaryTypes],
+    new_val: dict[OcsfName, OcsfDictionaryTypes],
+) -> dict[OcsfName, Difference[OcsfDictionaryTypes]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfAttr],
+    new_val: dict[OcsfName, OcsfAttr],
+) -> dict[OcsfName, Difference[OcsfAttr]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfSchema],
+    new_val: dict[OcsfName, OcsfSchema],
+) -> dict[OcsfName, Difference[OcsfSchema]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfEvent],
+    new_val: dict[OcsfName, OcsfEvent],
+) -> dict[OcsfName, Difference[OcsfEvent]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfObject],
+    new_val: dict[OcsfName, OcsfObject],
+) -> dict[OcsfName, Difference[OcsfObject]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfDeprecationInfo],
+    new_val: dict[OcsfName, OcsfDeprecationInfo],
+) -> dict[OcsfName, Difference[OcsfDeprecationInfo]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfDictionary],
+    new_val: dict[OcsfName, OcsfDictionary],
+) -> dict[OcsfName, Difference[OcsfDictionary]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfCategories],
+    new_val: dict[OcsfName, OcsfCategories],
+) -> dict[OcsfName, Difference[OcsfCategories]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfInclude],
+    new_val: dict[OcsfName, OcsfInclude],
+) -> dict[OcsfName, Difference[OcsfInclude]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfProfile],
+    new_val: dict[OcsfName, OcsfProfile],
+) -> dict[OcsfName, Difference[OcsfProfile]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfExtension],
+    new_val: dict[OcsfName, OcsfExtension],
+) -> dict[OcsfName, Difference[OcsfExtension]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfVersion],
+    new_val: dict[OcsfName, OcsfVersion],
+) -> dict[OcsfName, Difference[OcsfVersion]]: ...
+
+
+@overload
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfEnumMember],
+    new_val: dict[OcsfName, OcsfEnumMember],
+) -> dict[OcsfName, Difference[OcsfEnumMember]]: ...
+
+
+def _compare_dict(
+    old_val: dict[OcsfName, OcsfComparable],
+    new_val: dict[OcsfName, OcsfComparable],
 ) -> dict[OcsfName, Difference[OcsfComparable]]:
     diff_dict: dict[OcsfName, Difference[OcsfComparable]] = {}
 
-    old_d = old_val if old_val is not None else {}
-    new_d = new_val if new_val is not None else {}
-    keys: set[OcsfName] = set(old_d.keys()) | set(new_d.keys())
+    keys: set[OcsfName] = set(old_val.keys()) | set(new_val.keys())
 
     for key in keys:
-        if key not in new_d:
-            diff_dict[key] = Removal(before=old_d[key])
-        elif key not in old_d:
-            diff_dict[key] = Addition(after=new_d[key])
-        elif old_d[key] == new_d[key]:
+        if key not in new_val:
+            diff_dict[key] = Removal(before=old_val[key])
+        elif key not in old_val:
+            diff_dict[key] = Addition(after=new_val[key])
+        elif old_val[key] == new_val[key]:
             diff_dict[key] = NoChange()
-        elif isinstance(old_d[key], OcsfModel) and isinstance(new_d[key], OcsfModel):
-            diff_dict[key] = compare(old_d[key], new_d[key])
+        elif isinstance(old_val[key], OcsfComparableU) and isinstance(
+            new_val[key], OcsfComparableU
+        ):
+            diff_dict[key] = compare(old_val[key], new_val[key])
         else:
-            diff_dict[key] = _compare_primitive(old_d[key], new_d[key])
+            diff_dict[key] = _compare_primitive(old_val[key], new_val[key])
 
     return diff_dict
 
@@ -153,13 +245,18 @@ def compare(old_model: OcsfVersion, new_model: OcsfVersion) -> DiffVersion: ...
 
 
 @overload
-def compare(old_model: OcsfEnumMember, new_model: OcsfEnumMember) -> DiffEnumMember: ...
+def compare(
+    old_model: OcsfDictionaryTypes, new_model: OcsfDictionaryTypes
+) -> DiffDictionaryTypes: ...
+
 
 @overload
-def compare(old_model: OcsfDictionaryTypes, new_model: OcsfDictionaryTypes) -> DiffDictionaryTypes: ...
+def compare(old_model: OcsfEnumMember, new_model: OcsfEnumMember) -> DiffEnumMember: ...
 
 
-def compare(old_model: OcsfComparable, new_model: OcsfComparable) -> DiffModel:
+def compare(
+    old_model: OcsfComparable, new_model: OcsfComparable
+) -> ChangedModel[OcsfComparable]:
     diff = create_diff(old_model)
     hints = get_type_hints(old_model)
 
@@ -191,7 +288,16 @@ def compare(old_model: OcsfComparable, new_model: OcsfComparable) -> DiffModel:
             # We know that model.py doesn't have any properties that would cause
             # problems with the line below, so type checking is disabled. But
             # there's probably a way to enable it and get the desired result.
-            setattr(diff, attr, _compare_dict(old_val, new_val))  # type: ignore
+
+            # TODO check for optional dict
+            setattr(
+                diff,
+                attr,
+                _compare_dict(
+                    old_val if old_val is not None else {},
+                    new_val if new_val is not None else {},
+                ),
+            )  # type: ignore
 
         # 4. everything else
         else:

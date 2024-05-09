@@ -62,13 +62,16 @@ class Change(Difference[T]):
 class NoChange(Difference[T]): ...
 
 
+class ChangedModel(Difference[T]): ...
+
+
 @dataclass
-class DiffVersion(Difference[OcsfVersion]):
+class DiffVersion(ChangedModel[OcsfVersion]):
     version: Difference[str] = field(default_factory=NoChange[str])
 
 
 @dataclass
-class DiffEnumMember(Difference[OcsfEnumMember]):
+class DiffEnumMember(ChangedModel[OcsfEnumMember]):
     caption: Difference[str] = field(default_factory=NoChange[str])
     description: Difference[Optional[str]] = field(
         default_factory=NoChange[Optional[str]]
@@ -80,13 +83,13 @@ DiffEnum = dict[OcsfEnumValue, Difference[OcsfEnumMember]]
 
 
 @dataclass
-class DiffDeprecationInfo(Difference[OcsfDeprecationInfo]):
+class DiffDeprecationInfo(ChangedModel[OcsfDeprecationInfo]):
     message: Difference[str] = field(default_factory=NoChange[str])
     since: Difference[str] = field(default_factory=NoChange[str])
 
 
 @dataclass
-class DiffAttr(Difference[OcsfAttr]):
+class DiffAttr(ChangedModel[OcsfAttr]):
     include: Difference[Optional[str]] = field(default_factory=NoChange[Optional[str]])
     caption: Difference[Optional[str]] = field(default_factory=NoChange[Optional[str]])
     default: Difference[Optional[str]] = field(default_factory=NoChange[Optional[str]])
@@ -133,7 +136,7 @@ DiffAttributes = dict[OcsfName, Difference[OcsfAttr]]
 
 
 @dataclass
-class DiffExtension(Difference[OcsfExtension]):
+class DiffExtension(ChangedModel[OcsfExtension]):
     uid: Difference[int] = field(default_factory=NoChange[int])
     name: Difference[str] = field(default_factory=NoChange[str])
     caption: Difference[str] = field(default_factory=NoChange[str])
@@ -145,14 +148,14 @@ class DiffExtension(Difference[OcsfExtension]):
 
 
 @dataclass
-class DiffDictionaryTypes(Difference[OcsfDictionaryTypes]):
+class DiffDictionaryTypes(ChangedModel[OcsfDictionaryTypes]):
     attributes: DiffAttributes = field(default_factory=dict)
     caption: Difference[str] = field(default_factory=NoChange[str])
     description: Difference[str] = field(default_factory=NoChange[str])
 
 
 @dataclass
-class DiffDictionary(Difference[OcsfDictionary]):
+class DiffDictionary(ChangedModel[OcsfDictionary]):
     attributes: DiffAttributes = field(default_factory=dict)
     caption: Difference[str] = field(default_factory=NoChange[str])
     description: Difference[str] = field(default_factory=NoChange[str])
@@ -163,7 +166,7 @@ class DiffDictionary(Difference[OcsfDictionary]):
 
 
 @dataclass
-class DiffCategory(Difference[OcsfCategory]):
+class DiffCategory(ChangedModel[OcsfCategory]):
     caption: Difference[str] = field(default_factory=NoChange[str])
     description: Difference[str] = field(default_factory=NoChange[str])
     uid: Difference[int] = field(default_factory=NoChange[int])
@@ -171,7 +174,7 @@ class DiffCategory(Difference[OcsfCategory]):
 
 
 @dataclass
-class DiffCategories(Difference[OcsfCategories]):
+class DiffCategories(ChangedModel[OcsfCategories]):
     attributes: dict[OcsfName, Difference[OcsfCategory]] = field(default_factory=dict)
     caption: Difference[str] = field(default_factory=NoChange[str])
     description: Difference[str] = field(default_factory=NoChange[str])
@@ -179,7 +182,7 @@ class DiffCategories(Difference[OcsfCategories]):
 
 
 @dataclass
-class DiffInclude(Difference[OcsfInclude]):
+class DiffInclude(ChangedModel[OcsfInclude]):
     caption: Difference[str] = field(default_factory=NoChange[str])
     attributes: DiffAttributes = field(default_factory=dict)
     description: Difference[Optional[str]] = field(
@@ -191,7 +194,7 @@ class DiffInclude(Difference[OcsfInclude]):
 
 
 @dataclass
-class DiffProfile(Difference[OcsfProfile]):
+class DiffProfile(ChangedModel[OcsfProfile]):
     caption: Difference[str] = field(default_factory=NoChange[str])
     description: Difference[str] = field(default_factory=NoChange[str])
     meta: Difference[str] = field(default_factory=NoChange[str])
@@ -202,7 +205,7 @@ class DiffProfile(Difference[OcsfProfile]):
 
 
 @dataclass
-class DiffObject(Difference[OcsfObject]):
+class DiffObject(ChangedModel[OcsfObject]):
     caption: Difference[str] = field(default_factory=NoChange[str])
     name: Difference[OcsfName] = field(default_factory=NoChange[OcsfName])
     attributes: DiffAttributes = field(default_factory=dict)
@@ -228,7 +231,7 @@ class DiffObject(Difference[OcsfObject]):
 
 
 @dataclass
-class DiffEvent(Difference[OcsfEvent]):
+class DiffEvent(ChangedModel[OcsfEvent]):
     caption: Difference[str] = field(default_factory=NoChange[str])
     name: Difference[str] = field(default_factory=NoChange[str])
     attributes: DiffAttributes = field(default_factory=dict)
@@ -252,7 +255,7 @@ class DiffEvent(Difference[OcsfEvent]):
 
 
 @dataclass
-class DiffSchema(Difference[OcsfSchema]):
+class DiffSchema(ChangedModel[OcsfSchema]):
     classes: dict[OcsfName, Difference[OcsfEvent]] = field(default_factory=dict)
     objects: dict[OcsfName, Difference[OcsfObject]] = field(default_factory=dict)
     version: Difference[OcsfVersion] = field(default_factory=NoChange[OcsfVersion])
@@ -278,7 +281,6 @@ DiffModel = (
     | DiffDeprecationInfo
 )
 
-# OcsfComparable = OcsfSchema | OcsfEvent | OcsfObject | OcsfAttr | OcsfDeprecationInfo | OcsfDictionary | OcsfCategories | OcsfInclude | OcsfProfile | OcsfExtension | OcsfVersion | OcsfEnumMember
 OcsfComparable = TypeVar(
     "OcsfComparable",
     OcsfSchema,
@@ -296,7 +298,23 @@ OcsfComparable = TypeVar(
     OcsfEnumMember,
 )
 
-#TODO would be nice to get these by introspecting OcsfComparable
+OcsfComparableU = (
+    OcsfSchema
+    | OcsfEvent
+    | OcsfObject
+    | OcsfAttr
+    | OcsfDeprecationInfo
+    | OcsfDictionary
+    | OcsfDictionaryTypes
+    | OcsfCategories
+    | OcsfInclude
+    | OcsfProfile
+    | OcsfExtension
+    | OcsfVersion
+    | OcsfEnumMember,
+)
+
+# TODO would be nice to get these by introspecting OcsfComparable
 COMPARABLE_TYPES: tuple[type, ...] = (
     OcsfSchema,
     OcsfEvent,
