@@ -1,7 +1,7 @@
 # pyright: reportPrivateUsage = false
 from typing import Optional
 
-from ocsf_diff.compare import compare, _compare_primitive
+from ocsf_diff.compare import compare, compare_primitive
 from ocsf_diff.model import (
     Change,
     NoChange,
@@ -14,16 +14,14 @@ from ocsf_schema import OcsfAttr, OcsfEnum, OcsfEnumMember, OcsfDictionaryTypes
 
 
 def test_compare_primitive():
-    assert _compare_primitive(1, 2) == Change(before=1, after=2)
-    assert _compare_primitive(True, False) == Change(before=True, after=False)
-    assert _compare_primitive(True, True) == NoChange[bool]()
-    assert _compare_primitive([1, 2, 3], [1, 2]) == Change(
-        before=[1, 2, 3], after=[1, 2]
-    )
+    assert compare_primitive(1, 2) == Change(before=1, after=2)
+    assert compare_primitive(True, False) == Change(before=True, after=False)
+    assert compare_primitive(True, True) == NoChange[bool]()
+    assert compare_primitive([1, 2, 3], [1, 2]) == Change(before=[1, 2, 3], after=[1, 2])
 
     x1: Optional[bool] = True
     x2: Optional[bool] = None
-    assert _compare_primitive(x1, x2) == Change(True, None)
+    assert compare_primitive(x1, x2) == Change(True, None)
 
 
 def test_compare_scalar():
@@ -70,13 +68,9 @@ def test_optional_dict():
     assert "1" in diff.enum
     assert "-1" in diff.enum
     assert "99" in diff.enum
-    assert diff.enum["-1"] == Removal[OcsfEnumMember](
-        before=OcsfEnumMember(caption="Unknown")
-    )
+    assert diff.enum["-1"] == Removal[OcsfEnumMember](before=OcsfEnumMember(caption="Unknown"))
     assert diff.enum["1"] == NoChange[OcsfEnumMember]()
-    assert diff.enum["99"] == Addition[OcsfEnumMember](
-        after=OcsfEnumMember(caption="Unknown")
-    )
+    assert diff.enum["99"] == Addition[OcsfEnumMember](after=OcsfEnumMember(caption="Unknown"))
 
 
 def test_empty_dict():
@@ -117,14 +111,8 @@ def test_dict():
         assert attr in diff.attributes
 
     assert diff.attributes["src_endpoint"] == NoChange[OcsfAttr]()
-    assert diff.attributes["signature"] == Addition[OcsfAttr](
-        after=OcsfAttr(caption="signature")
-    )
-    assert diff.attributes["relevance"] == Removal[OcsfAttr](
-        before=OcsfAttr(type="int_t")
-    )
+    assert diff.attributes["signature"] == Addition[OcsfAttr](after=OcsfAttr(caption="signature"))
+    assert diff.attributes["relevance"] == Removal[OcsfAttr](before=OcsfAttr(type="int_t"))
     assert diff.attributes["dst_endpoint"] == DiffAttr(
-        caption=Change[Optional[str]](
-            before="Dst Endpoint", after="Destination Endpoint"
-        )
+        caption=Change[Optional[str]](before="Dst Endpoint", after="Destination Endpoint")
     )
