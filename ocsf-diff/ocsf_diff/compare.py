@@ -3,6 +3,7 @@
 from types import UnionType
 from typing import (
     TypeVar,
+    TypeGuard,
     Union,
     get_args,
     get_type_hints,
@@ -23,6 +24,7 @@ from ocsf_schema.model import (
     OcsfInclude,
     OcsfProfile,
     OcsfExtension,
+    OcsfCategory,
     OcsfVersion,
     OcsfEnumMember,
     OcsfDictionaryTypes,
@@ -36,11 +38,13 @@ from ocsf_diff.model import (
     ChangedModel,
     OcsfComparable,
     OcsfComparableU,
+    DiffModel,
     COMPARABLE_TYPES,
     DiffSchema,
     DiffEvent,
     DiffObject,
     DiffAttr,
+    DiffCategory,
     DiffDeprecationInfo,
     DiffDictionary,
     DiffCategories,
@@ -227,6 +231,8 @@ def compare(old_model: OcsfDictionary, new_model: OcsfDictionary) -> DiffDiction
 @overload
 def compare(old_model: OcsfCategories, new_model: OcsfCategories) -> DiffCategories: ...
 
+@overload
+def compare(old_model: OcsfCategory, new_model: OcsfCategory) -> DiffCategory: ...
 
 @overload
 def compare(old_model: OcsfInclude, new_model: OcsfInclude) -> DiffInclude: ...
@@ -253,11 +259,15 @@ def compare(
 @overload
 def compare(old_model: OcsfEnumMember, new_model: OcsfEnumMember) -> DiffEnumMember: ...
 
+CompT = TypeVar("CompT", bound=OcsfModel)
+
+def _comparable_models(models: tuple[OcsfModel, OcsfModel]) -> TypeGuard[tuple[OcsfModel, OcsfModel]]:
+    return type(models[0]) == type(models[1]) # and isinstance(models[0], OcsfModel)
 
 def compare(
-    old_model: OcsfComparable, new_model: OcsfComparable
-) -> ChangedModel[OcsfComparable]:
-    diff = create_diff(old_model)
+    old_model: CompT, new_model: CompT 
+) -> ChangedModel[CompT]:
+    diff: ChangedModel[CompT] = create_diff(old_model)
     hints = get_type_hints(old_model)
 
     for attr, value in hints.items():
@@ -267,7 +277,7 @@ def compare(
 
         # Scenarios
         # 1. Two OCSF models (recurse)
-        if isinstance(old_val, OcsfModel) and isinstance(new_val, OcsfModel):
+        if isinstance(old_val, OcsfModel) and isinstance(new_val, OcsfModel) and type(old_val) == type(new_val):
             assert type(old_val) == type(new_val)
             assert type(old_val) in COMPARABLE_TYPES
             setattr(diff, attr, compare(old_val, new_val))

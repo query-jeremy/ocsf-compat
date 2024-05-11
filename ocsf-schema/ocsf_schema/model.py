@@ -8,14 +8,15 @@ from typing import (
 OcsfEnumValue = str
 OcsfName = str
 
+class OcsfModel: ...
 
 @dataclass
-class OcsfVersion:
+class OcsfVersion(OcsfModel):
     version: str
 
 
 @dataclass
-class OcsfEnumMember:
+class OcsfEnumMember(OcsfModel):
     caption: str
     description: Optional[str] = None
     notes: Optional[str] = None
@@ -25,13 +26,13 @@ OcsfEnum = dict[OcsfEnumValue, OcsfEnumMember]
 
 
 @dataclass
-class OcsfDeprecationInfo:
+class OcsfDeprecationInfo(OcsfModel):
     message: str
     since: str
 
 
 @dataclass
-class OcsfAttr:
+class OcsfAttr(OcsfModel):
     include: Optional[str] = None
     caption: Optional[str] = None
     default: Optional[Any] = None
@@ -58,7 +59,7 @@ OcsfAttributes = dict[OcsfName, OcsfAttr]
 
 
 @dataclass
-class OcsfExtension:
+class OcsfExtension(OcsfModel):
     uid: int
     name: OcsfName
     caption: str
@@ -68,14 +69,14 @@ class OcsfExtension:
 
 
 @dataclass
-class OcsfDictionaryTypes:
+class OcsfDictionaryTypes(OcsfModel):
     attributes: OcsfAttributes
     caption: str
     description: str
 
 
 @dataclass
-class OcsfDictionary:
+class OcsfDictionary(OcsfModel):
     attributes: OcsfAttributes
     caption: str
     description: str
@@ -84,7 +85,7 @@ class OcsfDictionary:
 
 
 @dataclass
-class OcsfCategory:
+class OcsfCategory(OcsfModel):
     caption: str
     description: str
     uid: int
@@ -92,7 +93,7 @@ class OcsfCategory:
 
 
 @dataclass
-class OcsfCategories:
+class OcsfCategories(OcsfModel):
     attributes: dict[OcsfName, OcsfCategory]
     caption: str
     description: str
@@ -100,7 +101,7 @@ class OcsfCategories:
 
 
 @dataclass
-class OcsfInclude:
+class OcsfInclude(OcsfModel):
     caption: str
     attributes: OcsfAttributes
     description: Optional[str] = None
@@ -108,7 +109,7 @@ class OcsfInclude:
 
 
 @dataclass
-class OcsfProfile:
+class OcsfProfile(OcsfModel):
     caption: str
     description: str
     meta: str
@@ -117,7 +118,7 @@ class OcsfProfile:
 
 
 @dataclass
-class OcsfObject:
+class OcsfObject(OcsfModel):
     caption: str
     name: OcsfName
     attributes: OcsfAttributes
@@ -131,7 +132,7 @@ class OcsfObject:
 
 
 @dataclass
-class OcsfEvent:
+class OcsfEvent(OcsfModel):
     caption: str
     name: OcsfName
     attributes: OcsfAttributes
@@ -147,14 +148,14 @@ class OcsfEvent:
 
 
 @dataclass
-class OcsfSchema:
+class OcsfSchema(OcsfModel):
     version: str
     classes: dict[OcsfName, OcsfEvent]
     objects: dict[OcsfName, OcsfObject]
     types: OcsfAttributes
     base_event: Optional[OcsfEvent] = None
 
-
+"""
 OcsfModel = (
     OcsfSchema
     | OcsfEvent
@@ -171,3 +172,4 @@ OcsfModel = (
     | OcsfInclude
     | OcsfProfile
 )
+"""

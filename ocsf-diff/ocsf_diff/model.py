@@ -33,6 +33,7 @@ from ocsf_schema import (
     OcsfObject,
     OcsfEvent,
     OcsfSchema,
+    OcsfModel,
 )
 
 
@@ -62,7 +63,8 @@ class Change(Difference[T]):
 class NoChange(Difference[T]): ...
 
 
-class ChangedModel(Difference[T]): ...
+OcsfT = TypeVar("OcsfT", bound=OcsfModel)
+class ChangedModel(Difference[OcsfT]): ...
 
 
 @dataclass
@@ -269,6 +271,7 @@ DiffModel = (
     DiffSchema
     | DiffDictionary
     | DiffDictionaryTypes
+    | DiffCategory
     | DiffCategories
     | DiffInclude
     | DiffProfile
@@ -290,6 +293,7 @@ OcsfComparable = TypeVar(
     OcsfDeprecationInfo,
     OcsfDictionary,
     OcsfDictionaryTypes,
+    OcsfCategory,
     OcsfCategories,
     OcsfInclude,
     OcsfProfile,
@@ -307,6 +311,7 @@ OcsfComparableU = (
     | OcsfDictionary
     | OcsfDictionaryTypes
     | OcsfCategories
+    | OcsfCategory
     | OcsfInclude
     | OcsfProfile
     | OcsfExtension
@@ -323,6 +328,7 @@ COMPARABLE_TYPES: tuple[type, ...] = (
     OcsfDeprecationInfo,
     OcsfDictionary,
     OcsfDictionaryTypes,
+    OcsfCategory,
     OcsfCategories,
     OcsfInclude,
     OcsfProfile,

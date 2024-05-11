@@ -1,7 +1,8 @@
-from typing import overload
+from typing import overload, TypeVar
 
 from ocsf_schema.model import (
     OcsfSchema,
+    OcsfCategory,
     OcsfEvent,
     OcsfObject,
     OcsfAttr,
@@ -14,10 +15,12 @@ from ocsf_schema.model import (
     OcsfExtension,
     OcsfVersion,
     OcsfEnumMember,
+    OcsfModel,
 )
 from ocsf_diff.model import (
     DiffSchema,
     DiffEvent,
+    DiffCategory,
     DiffObject,
     DiffAttr,
     DiffDeprecationInfo,
@@ -30,7 +33,6 @@ from ocsf_diff.model import (
     DiffExtension,
     DiffVersion,
     DiffEnumMember,
-    OcsfComparable,
 )
 
 
@@ -61,6 +63,9 @@ def create_diff(model: OcsfDictionary) -> DiffDictionary: ...
 @overload
 def create_diff(model: OcsfCategories) -> DiffCategories: ...
 
+@overload
+def create_diff(model: OcsfCategory) -> DiffCategory: ...
+
 
 @overload
 def create_diff(model: OcsfInclude) -> DiffInclude: ...
@@ -85,8 +90,9 @@ def create_diff(model: OcsfEnumMember) -> DiffEnumMember: ...
 @overload
 def create_diff(model: OcsfDictionaryTypes) -> DiffDictionaryTypes: ...
 
+T = TypeVar("T", bound=OcsfModel)
 
-def create_diff(model: OcsfComparable) -> ChangedModel[OcsfComparable]:
+def create_diff(model: T) -> ChangedModel[T]:
     match model:
         case OcsfSchema():
             return DiffSchema()
@@ -102,6 +108,8 @@ def create_diff(model: OcsfComparable) -> ChangedModel[OcsfComparable]:
             return DiffDictionary()
         case OcsfCategories():
             return DiffCategories()
+        case OcsfCategory():
+            return DiffCategory()
         case OcsfInclude():
             return DiffInclude()
         case OcsfProfile():
@@ -114,3 +122,5 @@ def create_diff(model: OcsfComparable) -> ChangedModel[OcsfComparable]:
             return DiffEnumMember()
         case OcsfDictionaryTypes():
             return DiffDictionaryTypes()
+        case _:
+            raise ValueError("What model be this?")
