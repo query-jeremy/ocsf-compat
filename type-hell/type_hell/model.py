@@ -1,9 +1,10 @@
+from abc import ABC
 from dataclasses import dataclass, field
 from typing import Optional
 
 OcsfName = str
 
-class OcsfModel: ...
+class OcsfModel(ABC): ...
 
 @dataclass
 class OcsfAttr(OcsfModel):
