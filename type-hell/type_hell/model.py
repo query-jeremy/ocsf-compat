@@ -22,5 +22,5 @@ class OcsfEvent(OcsfModel):
 @dataclass
 class OcsfSchema(OcsfModel):
     version: str
-    classes: dict[OcsfName, OcsfEvent]
+    classes: dict[OcsfName, OcsfEvent] = field(default_factory=dict)
     base_event: Optional[OcsfEvent] = None
