@@ -70,8 +70,34 @@ if __name__ == "__main__":
         "size": OcsfAttr(caption="Sz")
     })
 
-    schema1 = OcsfSchema(version="0.1", base_event=be1)
-    schema2 = OcsfSchema(version="0.2", base_event=be2)
+    new_e = OcsfEvent(caption="Shiny and new", name="newe")
+    old_e = OcsfEvent(caption="Old and dirty", name="olde")
+    same_e = OcsfEvent(caption="Same Event", name="samee", attributes={
+        "height": OcsfAttr(caption="Height"),
+        "width": OcsfAttr(caption="Width"),
+    })
+    changed_e1 = OcsfEvent(caption="Changed Event 1", name="changed", attributes={
+        "speed": OcsfAttr(caption="Speed"),
+        "power": OcsfAttr(caption="Power"),
+        "mass": OcsfAttr(caption="Mass"),
+    })
+    changed_e2 = OcsfEvent(caption="Changed Event 1", name="changed", attributes={
+        "speed": OcsfAttr(caption="Speed"),
+        "power": OcsfAttr(caption="Power (and more of it)"),
+        "energy": OcsfAttr(caption="Energy"),
+    })
+
+    schema1 = OcsfSchema(version="0.1", base_event=be1, classes={
+        "olde": old_e,
+        "samee": same_e,
+        "changede": changed_e1,
+    })
+    schema2 = OcsfSchema(version="0.2", base_event=be2, classes={
+        "newe": new_e,
+        "samee": same_e,
+        "changede": changed_e2,
+    })
+
 
     from pprint import pprint
     pprint(compare_any(schema1, schema2))
