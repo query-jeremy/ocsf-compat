@@ -90,6 +90,9 @@ def create_diff(model: OcsfEnumMember) -> DiffEnumMember: ...
 @overload
 def create_diff(model: OcsfDictionaryTypes) -> DiffDictionaryTypes: ...
 
+@overload
+def create_diff(model: OcsfModel) -> ChangedModel[OcsfModel]: ...
+
 T = TypeVar("T", bound=OcsfModel)
 
 def create_diff(model: T) -> ChangedModel[T]:

@@ -201,7 +201,7 @@ def _compare_dict(
 
     return diff_dict
 
-
+"""
 @overload
 def compare(old_model: OcsfAttr, new_model: OcsfAttr) -> DiffAttr: ...
 
@@ -258,6 +258,7 @@ def compare(
 
 @overload
 def compare(old_model: OcsfEnumMember, new_model: OcsfEnumMember) -> DiffEnumMember: ...
+"""
 
 CompT = TypeVar("CompT", bound=OcsfModel)
 
@@ -277,7 +278,7 @@ def compare(
 
         # Scenarios
         # 1. Two OCSF models (recurse)
-        if isinstance(old_val, OcsfModel) and isinstance(new_val, OcsfModel) and type(old_val) == type(new_val):
+        if _comparable_models((old_val, new_val)):#isinstance(old_val, OcsfModel) and isinstance(new_val, OcsfModel) and type(old_val) == type(new_val):
             assert type(old_val) == type(new_val)
             assert type(old_val) in COMPARABLE_TYPES
             setattr(diff, attr, compare(old_val, new_val))

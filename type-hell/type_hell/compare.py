@@ -1,7 +1,7 @@
 
 from typing import TypeVar, get_type_hints, get_origin, cast
 
-from type_hell.diff import DiffSchema, DiffEvent, DiffAttr, Difference, NoChange, Addition, Removal, Change
+from type_hell.diff import DiffSchema, DiffEvent, DiffAttr, Difference, NoChange, Addition, Removal, Change, ChangedModel
 from type_hell.model import OcsfModel, OcsfSchema, OcsfEvent, OcsfAttr
 
 
@@ -30,6 +30,19 @@ def compare_dict(old_val: dict[K, T] | None, new_val: dict[K, T] | None) -> dict
     
     return ret
 
+OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
+def create_diff(val: OcsfT) -> ChangedModel[OcsfT]:
+    match val:
+        case OcsfSchema():
+            ret = DiffSchema()
+        case OcsfEvent():
+            ret = DiffEvent()
+        case OcsfAttr():
+            ret = DiffAttr()
+        case _:
+            raise ValueError("Unexpected model type")
+    
+    return cast(ChangedModel[OcsfT], ret)
 
 def compare_any(old_val: T, new_val: T) -> Difference[T]:
     if isinstance(old_val, OcsfModel) and type(old_val) == type(new_val):
@@ -56,10 +69,10 @@ def compare_any(old_val: T, new_val: T) -> Difference[T]:
         return cast(Difference[T], ret)
     
     elif old_val == new_val:
-        return NoChange[T]()
+        return NoChange()
 
     else:
-        return Change[T](before=old_val, after=new_val)
+        return Change(before=old_val, after=new_val)
 
 
 if __name__ == "__main__":

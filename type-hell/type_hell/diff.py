@@ -30,10 +30,10 @@ class Change(Difference[T]):
 @dataclass
 class NoChange(Difference[T]): ...
 
+from model import OcsfModel
+OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
 
-#OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
-
-class ChangedModel(Difference[T]): ...
+class ChangedModel(Difference[OcsfT]): ...
 
 
 @dataclass
