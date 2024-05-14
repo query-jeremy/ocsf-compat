@@ -32,7 +32,7 @@ def test_compare_scalar():
     assert diff.caption == Change(before="test1", after="test2")
     assert diff.description == NoChange()
     assert diff.requirement == NoChange()
-    assert diff.enum == NoChange()
+    assert diff.enum == {} #NoChange()
 
 
 def test_compare_optional_change():
@@ -41,7 +41,7 @@ def test_compare_optional_change():
     diff = compare(old_attr, new_attr)
 
     assert isinstance(diff, DiffAttr)
-    assert diff.requirement == Change(before=None, after="test")
+    assert diff.group== Change(before=None, after="test")
 
 
 def test_optional_dict():

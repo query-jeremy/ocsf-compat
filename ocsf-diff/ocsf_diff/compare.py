@@ -24,9 +24,10 @@ from ocsf_diff.model import (
 from ocsf_diff.factory import create_diff
 
 
+
+
 T = TypeVar("T")
 K = TypeVar("K")
-
 
 def compare_dict(old_val: dict[K, T] | None, new_val: dict[K, T] | None) -> dict[K, Difference[T]]:
     if old_val is None:
@@ -36,7 +37,7 @@ def compare_dict(old_val: dict[K, T] | None, new_val: dict[K, T] | None) -> dict
         new_val = {}
 
     ret: dict[K, Difference[T]] = {}
-    keys: set[K] = set(old_val.keys()) | set(new_val.keys())
+    keys: set[K] = set(old_val.keys()) | set(new_val.keys())    
 
     for key in keys:
         if key not in new_val:
@@ -47,13 +48,11 @@ def compare_dict(old_val: dict[K, T] | None, new_val: dict[K, T] | None) -> dict
             ret[key] = NoChange()
         else:
             ret[key] = compare(old_val[key], new_val[key])
-
+    
     return ret
 
 
-def is_optional_dict(
-    value: dict[Any, Any] | None, origin: type | UnionType, args: tuple[type, ...]
-) -> TypeGuard[dict[Any, Any] | None]:
+def is_optional_dict(value: dict[Any, Any] | None, origin: type | UnionType, args: tuple[type, ...]) -> TypeGuard[dict[Any, Any] | None]:
     if isinstance(value, dict):
         return True
     if origin != Union or len(args) != 2:
@@ -82,9 +81,9 @@ def compare(old_val: T, new_val: T) -> Difference[T]:
                 setattr(ret, attr, compare_dict(old_attr, new_attr))
             else:
                 setattr(ret, attr, compare(old_attr, new_attr))
-
+        
         return cast(Difference[T], ret)
-
+    
     elif old_val == new_val:
         return NoChange()
 
