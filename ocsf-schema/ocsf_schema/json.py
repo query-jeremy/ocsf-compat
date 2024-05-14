@@ -48,7 +48,7 @@ def names_to_keys(d: dict[str, Any]) -> dict[str, Any]:
 
 
 def from_json(data: str) -> OcsfSchema:
-    return from_dict(OcsfSchema, keys_to_names(json.loads(data))) # type: ignore
+    return from_dict(OcsfSchema, keys_to_names(json.loads(data)))  # type: ignore
 
 
 def to_dict(schema: OcsfSchema) -> dict[str, Any]:

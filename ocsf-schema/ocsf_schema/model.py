@@ -1,14 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Any, Optional, TypeVar
+from abc import ABC
 
-from typing import (
-    Any,
-    Optional,
-)
 
-OcsfEnumValue = str
-OcsfName = str
+class OcsfModel(ABC): ...
 
-class OcsfModel: ...
 
 @dataclass
 class OcsfVersion(OcsfModel):
@@ -22,9 +18,6 @@ class OcsfEnumMember(OcsfModel):
     notes: Optional[str] = None
 
 
-OcsfEnum = dict[OcsfEnumValue, OcsfEnumMember]
-
-
 @dataclass
 class OcsfDeprecationInfo(OcsfModel):
     message: str
@@ -32,96 +25,40 @@ class OcsfDeprecationInfo(OcsfModel):
 
 
 @dataclass
-class OcsfAttr(OcsfModel):
-    include: Optional[str] = None
-    caption: Optional[str] = None
-    default: Optional[Any] = None
-    description: Optional[str] = None
-    enum: Optional[OcsfEnum] = None
-    group: Optional[str] = None
+class OcsfType(OcsfModel):
+    caption: str
+    description: str
     is_array: bool = False
+    deprecated: Optional[OcsfDeprecationInfo] = None
     max_len: Optional[int] = None
-    name: Optional[str] = None
-    notes: Optional[str] = None
     observable: Optional[int] = None
     range: Optional[list[int]] = None
     regex: Optional[str] = None
-    requirement: Optional[str] = None
-    sibling: Optional[str] = None
     type: Optional[str] = None
     type_name: Optional[str] = None
-    profile: Optional[str | list[str]] = None
     values: Optional[list[Any]] = None
+
+
+@dataclass
+class OcsfAttr(OcsfModel):
+    caption: str
+    description: str
+    requirement: str
+    type: str
+    is_array: bool = False
     deprecated: Optional[OcsfDeprecationInfo] = None
-
-
-OcsfAttributes = dict[OcsfName, OcsfAttr]
-
-
-@dataclass
-class OcsfExtension(OcsfModel):
-    uid: int
-    name: OcsfName
-    caption: str
-    path: Optional[str] = None
-    version: Optional[str] = None
-    description: Optional[str] = None
-
-
-@dataclass
-class OcsfDictionaryTypes(OcsfModel):
-    attributes: OcsfAttributes
-    caption: str
-    description: str
-
-
-@dataclass
-class OcsfDictionary(OcsfModel):
-    attributes: OcsfAttributes
-    caption: str
-    description: str
-    name: OcsfName
-    types: OcsfDictionaryTypes
-
-
-@dataclass
-class OcsfCategory(OcsfModel):
-    caption: str
-    description: str
-    uid: int
-    type: Optional[str] = None
-
-
-@dataclass
-class OcsfCategories(OcsfModel):
-    attributes: dict[OcsfName, OcsfCategory]
-    caption: str
-    description: str
-    name: OcsfName
-
-
-@dataclass
-class OcsfInclude(OcsfModel):
-    caption: str
-    attributes: OcsfAttributes
-    description: Optional[str] = None
-    annotations: Optional[dict[str, str]] = None
-
-
-@dataclass
-class OcsfProfile(OcsfModel):
-    caption: str
-    description: str
-    meta: str
-    attributes: OcsfAttributes
-    annotations: Optional[dict[str, str]] = None
+    enum: Optional[dict[str, OcsfEnumMember]] = field(default_factory=dict)
+    group: Optional[str] = None
+    observable: Optional[int] = None
+    profile: Optional[str | list[str]] = None
+    sibling: Optional[str] = None
 
 
 @dataclass
 class OcsfObject(OcsfModel):
     caption: str
-    name: OcsfName
-    attributes: OcsfAttributes
+    name: str
+    attributes: dict[str, OcsfAttr] = field(default_factory=dict)
     description: Optional[str] = None
     extends: Optional[str] = None
     observable: Optional[int] = None
@@ -134,8 +71,8 @@ class OcsfObject(OcsfModel):
 @dataclass
 class OcsfEvent(OcsfModel):
     caption: str
-    name: OcsfName
-    attributes: OcsfAttributes
+    name: str
+    attributes: dict[str, OcsfAttr] = field(default_factory=dict)
     description: Optional[str] = None
     uid: Optional[int] = None
     category: Optional[str] = None
@@ -150,26 +87,43 @@ class OcsfEvent(OcsfModel):
 @dataclass
 class OcsfSchema(OcsfModel):
     version: str
-    classes: dict[OcsfName, OcsfEvent]
-    objects: dict[OcsfName, OcsfObject]
-    types: OcsfAttributes
+    classes: dict[str, OcsfEvent] = field(default_factory=dict)
+    objects: dict[str, OcsfObject] = field(default_factory=dict)
+    types: dict[str, OcsfType] = field(default_factory=dict)
     base_event: Optional[OcsfEvent] = None
 
+
+OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
+
 """
-OcsfModel = (
-    OcsfSchema
-    | OcsfEvent
-    | OcsfObject
-    | OcsfDeprecationInfo
-    | OcsfAttr
-    | OcsfEnumMember
-    | OcsfVersion
-    | OcsfExtension
-    | OcsfDictionaryTypes
-    | OcsfDictionary
-    | OcsfCategory
-    | OcsfCategories
-    | OcsfInclude
-    | OcsfProfile
-)
+@dataclass
+class OcsfDictionaryTypes(OcsfModel):
+    caption: str
+    description: str
+    attributes: OcsfAttributes = field(default_factory=dict)
+
+
+@dataclass
+class OcsfDictionary(OcsfModel):
+    caption: str
+    description: str
+    name: str
+    types: OcsfDictionaryTypes
+    attributes: OcsfAttributes = field(default_factory=dict)
+
+
+@dataclass
+class OcsfCategory(OcsfModel):
+    caption: str
+    description: str
+    uid: int
+    type: Optional[str] = None
+
+
+@dataclass
+class OcsfCategories(OcsfModel):
+    caption: str
+    description: str
+    name: str
+    attributes: dict[str, OcsfCategory] = field(default_factory=dict)
 """

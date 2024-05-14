@@ -14,7 +14,9 @@ JSON_DATA = """{
         "caption": "Authentication",
         "attributes": {
             "status": {
+                "caption": "Status",
                 "type": "int_t",
+                "requirement": "required",
                 "description": "Auth status"
             }
         }
@@ -34,6 +36,8 @@ JSON_DATA = """{
     "attributes": {
         "timestamp": {
             "type": "int_t",
+            "caption": "Timestamp",
+            "requirement": "required",
             "description": "Event timestamp"
         }
     }
