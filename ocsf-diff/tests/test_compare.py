@@ -32,7 +32,7 @@ def test_compare_scalar():
     assert diff.caption == Change(before="test1", after="test2")
     assert diff.description == NoChange()
     assert diff.requirement == NoChange()
-    assert diff.enum == {} #NoChange()
+    assert diff.enum == {}
 
 
 def test_compare_optional_change():
@@ -41,7 +41,7 @@ def test_compare_optional_change():
     diff = compare(old_attr, new_attr)
 
     assert isinstance(diff, DiffAttr)
-    assert diff.group== Change(before=None, after="test")
+    assert diff.group == Change(before=None, after="test")
 
 
 def test_optional_dict():
@@ -77,51 +77,3 @@ def test_optional_dict():
     assert diff.enum["-1"] == Removal(before=OcsfEnumMember(caption="Unknown"))
     assert diff.enum["1"] == NoChange()
     assert diff.enum["99"] == Addition(after=OcsfEnumMember(caption="Unknown"))
-
-
-def test_empty_dict():
-    """
-    old_dict = OcsfDictionaryTypes(caption="old", description="Old", attributes={})
-    new_dict = OcsfDictionaryTypes(caption="new", description="New", attributes={})
-    diff = compare(old_dict, new_dict)
-    assert diff.caption == Change[str](before="old", after="new")
-    assert diff.attributes == {}
-    """
-
-def test_dict():
-    """
-    old_dict = OcsfDictionaryTypes(
-        caption="types",
-        description="Types",
-        attributes={
-            "src_endpoint": OcsfAttr(caption="Source Endpoint"),
-            "dst_endpoint": OcsfAttr(caption="Dst Endpoint"),
-            "relevance": OcsfAttr(type="int_t"),
-        },
-    )
-    new_dict = OcsfDictionaryTypes(
-        caption="types",
-        description="New Types",
-        attributes={
-            "src_endpoint": OcsfAttr(caption="Source Endpoint"),
-            "dst_endpoint": OcsfAttr(caption="Destination Endpoint"),
-            "signature": OcsfAttr(caption="signature"),
-        },
-    )
-
-    diff = compare(old_dict, new_dict)
-    assert isinstance(diff, DiffDictionaryTypes)
-    assert diff.caption == NoChange[str]()
-    assert diff.description == Change[str](before="Types", after="New Types")
-
-    assert isinstance(diff.attributes, dict)
-    for attr in ("src_endpoint", "relevance", "signature", "dst_endpoint"):
-        assert attr in diff.attributes
-
-    assert diff.attributes["src_endpoint"] == NoChange[OcsfAttr]()
-    assert diff.attributes["signature"] == Addition[OcsfAttr](after=OcsfAttr(caption="signature"))
-    assert diff.attributes["relevance"] == Removal[OcsfAttr](before=OcsfAttr(type="int_t"))
-    assert diff.attributes["dst_endpoint"] == DiffAttr(
-        caption=Change[Optional[str]](before="Dst Endpoint", after="Destination Endpoint")
-    )
-    """
