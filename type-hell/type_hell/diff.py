@@ -2,7 +2,7 @@ from abc import ABC
 from typing import TypeVar, Optional, Generic
 from dataclasses import dataclass, field
 
-from type_hell.model import OcsfName, OcsfAttr, OcsfEvent, OcsfSchema
+from type_hell.model import OcsfName, OcsfAttr, OcsfEvent, OcsfSchema, OcsfModel
 
 
 T = TypeVar("T", covariant=True)
@@ -30,7 +30,6 @@ class Change(Difference[T]):
 @dataclass
 class NoChange(Difference[T]): ...
 
-from model import OcsfModel
 OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
 
 class ChangedModel(Difference[OcsfT]): ...
@@ -47,10 +46,11 @@ class DiffEvent(ChangedModel[OcsfEvent]):
     caption: Difference[str] = field(default_factory=NoChange[str])
     name: Difference[str] = field(default_factory=NoChange[str])
     uid: Difference[Optional[int]] = field(default_factory=NoChange[Optional[int]])
-    attributes: dict[OcsfName, OcsfAttr] = field(default_factory=dict)
+    attributes: dict[OcsfName, Difference[OcsfAttr]] = field(default_factory=dict)
+    enum: dict[OcsfName, Difference[OcsfAttr]] | NoChange[None] = field(default_factory=NoChange[None])
 
 @dataclass
 class DiffSchema(ChangedModel[OcsfSchema]):
     version: Difference[str] = field(default_factory=NoChange[str])
-    classes: dict[OcsfName, OcsfAttr] = field(default_factory=dict)
+    classes: dict[OcsfName, Difference[OcsfAttr]] = field(default_factory=dict)
     base_event: Difference[Optional[OcsfEvent]] = field(default_factory=NoChange[Optional[OcsfEvent]])

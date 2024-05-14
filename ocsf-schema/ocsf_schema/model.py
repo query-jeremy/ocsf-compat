@@ -58,15 +58,13 @@ class OcsfAttr(OcsfModel):
 class OcsfObject(OcsfModel):
     caption: str
     name: str
+    description: str
     attributes: dict[str, OcsfAttr] = field(default_factory=dict)
-    description: Optional[str] = None
     extends: Optional[str] = None
     observable: Optional[int] = None
     profiles: Optional[list[str]] = None
     constraints: Optional[dict[str, list[str]]] = None
-    include: Optional[str | list[str]] = None
     deprecated: Optional[OcsfDeprecationInfo] = None
-
 
 @dataclass
 class OcsfEvent(OcsfModel):
@@ -80,7 +78,6 @@ class OcsfEvent(OcsfModel):
     profiles: Optional[list[str]] = None
     associations: Optional[dict[str, list[str]]] = None
     constraints: Optional[dict[str, list[str]]] = None
-    include: Optional[str] = None
     deprecated: Optional[OcsfDeprecationInfo] = None
 
 

@@ -1,5 +1,6 @@
 
-from typing import TypeVar, get_type_hints, get_origin, cast
+from typing import TypeVar, get_type_hints, get_origin, cast, get_args, Union, Any, TypeGuard
+from types import UnionType, NoneType
 
 from type_hell.diff import DiffSchema, DiffEvent, DiffAttr, Difference, NoChange, Addition, Removal, Change, ChangedModel
 from type_hell.model import OcsfModel, OcsfSchema, OcsfEvent, OcsfAttr
@@ -30,6 +31,7 @@ def compare_dict(old_val: dict[K, T] | None, new_val: dict[K, T] | None) -> dict
     
     return ret
 
+
 OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
 def create_diff(val: OcsfT) -> ChangedModel[OcsfT]:
     match val:
@@ -44,24 +46,32 @@ def create_diff(val: OcsfT) -> ChangedModel[OcsfT]:
     
     return cast(ChangedModel[OcsfT], ret)
 
+def is_optional_dict(value: dict[Any, Any] | None, origin: type | UnionType, args: tuple[type, ...]) -> TypeGuard[dict[Any, Any] | None]:
+    if isinstance(value, dict):
+        return True
+    if origin != Union or len(args) != 2:
+        return False
+
+    for arg in args:
+        arg_origin = get_origin(arg)
+        if arg is not NoneType and arg_origin is not dict:
+            return False
+
+    return True
+
+
 def compare_any(old_val: T, new_val: T) -> Difference[T]:
     if isinstance(old_val, OcsfModel) and type(old_val) == type(new_val):
-        match old_val:
-            case OcsfSchema():
-                ret = DiffSchema()
-            case OcsfEvent():
-                ret = DiffEvent()
-            case OcsfAttr():
-                ret = DiffAttr()
-            case _:
-                raise ValueError("Unexpected model type")
-        
+        ret = create_diff(old_val)
+
         for attr, value in get_type_hints(old_val).items():
             old_attr = getattr(old_val, attr)
             new_attr = getattr(new_val, attr)
 
             origin = get_origin(value)
-            if origin == dict:
+            args = get_args(value)
+
+            if is_optional_dict(old_attr, origin, args) and is_optional_dict(new_attr, origin, args):
                 setattr(ret, attr, compare_dict(old_attr, new_attr))
             else:
                 setattr(ret, attr, compare_any(old_attr, new_attr))
@@ -93,7 +103,8 @@ if __name__ == "__main__":
         "speed": OcsfAttr(caption="Speed"),
         "power": OcsfAttr(caption="Power"),
         "mass": OcsfAttr(caption="Mass"),
-    })
+    }, enum={"Lumens": OcsfAttr(caption="Lumens")})
+
     changed_e2 = OcsfEvent(caption="Changed Event 1", name="changed", attributes={
         "speed": OcsfAttr(caption="Speed"),
         "power": OcsfAttr(caption="Power (and more of it)"),

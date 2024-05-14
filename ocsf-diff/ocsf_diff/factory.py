@@ -1,129 +1,48 @@
-from typing import overload, TypeVar
+from typing import cast
 
 from ocsf_schema.model import (
     OcsfSchema,
-    OcsfCategory,
     OcsfEvent,
     OcsfObject,
     OcsfAttr,
     OcsfDeprecationInfo,
-    OcsfDictionary,
-    OcsfDictionaryTypes,
-    OcsfCategories,
-    OcsfInclude,
-    OcsfProfile,
-    OcsfExtension,
+    OcsfType,
     OcsfVersion,
     OcsfEnumMember,
-    OcsfModel,
+    OcsfT,
 )
 from ocsf_diff.model import (
     DiffSchema,
     DiffEvent,
-    DiffCategory,
     DiffObject,
     DiffAttr,
     DiffDeprecationInfo,
     ChangedModel,
-    DiffDictionary,
-    DiffDictionaryTypes,
-    DiffCategories,
-    DiffInclude,
-    DiffProfile,
-    DiffExtension,
+    DiffType,
     DiffVersion,
     DiffEnumMember,
 )
 
 
-@overload
-def create_diff(model: OcsfSchema) -> DiffSchema: ...
-
-
-@overload
-def create_diff(model: OcsfEvent) -> DiffEvent: ...
-
-
-@overload
-def create_diff(model: OcsfObject) -> DiffObject: ...
-
-
-@overload
-def create_diff(model: OcsfAttr) -> DiffAttr: ...
-
-
-@overload
-def create_diff(model: OcsfDeprecationInfo) -> DiffDeprecationInfo: ...
-
-
-@overload
-def create_diff(model: OcsfDictionary) -> DiffDictionary: ...
-
-
-@overload
-def create_diff(model: OcsfCategories) -> DiffCategories: ...
-
-@overload
-def create_diff(model: OcsfCategory) -> DiffCategory: ...
-
-
-@overload
-def create_diff(model: OcsfInclude) -> DiffInclude: ...
-
-
-@overload
-def create_diff(model: OcsfProfile) -> DiffProfile: ...
-
-
-@overload
-def create_diff(model: OcsfExtension) -> DiffExtension: ...
-
-
-@overload
-def create_diff(model: OcsfVersion) -> DiffVersion: ...
-
-
-@overload
-def create_diff(model: OcsfEnumMember) -> DiffEnumMember: ...
-
-
-@overload
-def create_diff(model: OcsfDictionaryTypes) -> DiffDictionaryTypes: ...
-
-@overload
-def create_diff(model: OcsfModel) -> ChangedModel[OcsfModel]: ...
-
-T = TypeVar("T", bound=OcsfModel)
-
-def create_diff(model: T) -> ChangedModel[T]:
+def create_diff(model: OcsfT) -> ChangedModel[OcsfT]:
     match model:
         case OcsfSchema():
-            return DiffSchema()
+            ret = DiffSchema()
         case OcsfEvent():
-            return DiffEvent()
+            ret = DiffEvent()
         case OcsfObject():
-            return DiffObject()
+            ret = DiffObject()
         case OcsfAttr():
-            return DiffAttr()
+            ret = DiffAttr()
         case OcsfDeprecationInfo():
-            return DiffDeprecationInfo()
-        case OcsfDictionary():
-            return DiffDictionary()
-        case OcsfCategories():
-            return DiffCategories()
-        case OcsfCategory():
-            return DiffCategory()
-        case OcsfInclude():
-            return DiffInclude()
-        case OcsfProfile():
-            return DiffProfile()
-        case OcsfExtension():
-            return DiffExtension()
+            ret = DiffDeprecationInfo()
         case OcsfVersion():
-            return DiffVersion()
+            ret = DiffVersion()
         case OcsfEnumMember():
-            return DiffEnumMember()
-        case OcsfDictionaryTypes():
-            return DiffDictionaryTypes()
+            ret = DiffEnumMember()
+        case OcsfType():
+            ret = DiffType()
         case _:
-            raise ValueError("What model be this?")
+            raise ValueError("Unrecognized OCSF model type")
+
+    return cast(ChangedModel[OcsfT], ret)

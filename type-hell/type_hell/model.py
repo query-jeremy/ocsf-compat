@@ -18,6 +18,7 @@ class OcsfEvent(OcsfModel):
     name: str
     uid: Optional[int] = None
     attributes: dict[OcsfName, OcsfAttr] = field(default_factory=dict)
+    enum: Optional[dict[OcsfName, OcsfAttr]] = None
 
 @dataclass
 class OcsfSchema(OcsfModel):
