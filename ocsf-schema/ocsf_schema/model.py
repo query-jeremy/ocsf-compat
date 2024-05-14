@@ -66,6 +66,7 @@ class OcsfObject(OcsfModel):
     constraints: Optional[dict[str, list[str]]] = None
     deprecated: Optional[OcsfDeprecationInfo] = None
 
+
 @dataclass
 class OcsfEvent(OcsfModel):
     caption: str
