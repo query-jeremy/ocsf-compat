@@ -27,7 +27,10 @@ T = TypeVar("T")
 K = TypeVar("K")
 
 
-def compare_dict(old_val: dict[K, T] | None, new_val: dict[K, T] | None) -> dict[K, Difference[T]]:
+def compare_dict(old_val: dict[K, T] | None, new_val: dict[K, T] | None) -> dict[K, Difference[T]] | NoChange[T]:
+    if old_val is None and new_val is None:
+        return NoChange()
+
     if old_val is None:
         old_val = {}
 
