@@ -27,7 +27,7 @@ class OcsfDeprecationInfo(OcsfModel):
 @dataclass
 class OcsfType(OcsfModel):
     caption: str
-    description: str
+    description: Optional[str] = None
     is_array: bool = False
     deprecated: Optional[OcsfDeprecationInfo] = None
     max_len: Optional[int] = None
@@ -42,12 +42,12 @@ class OcsfType(OcsfModel):
 @dataclass
 class OcsfAttr(OcsfModel):
     caption: str
-    description: str
     requirement: str
     type: str
+    description: Optional[str] = None
     is_array: bool = False
     deprecated: Optional[OcsfDeprecationInfo] = None
-    enum: Optional[dict[str, OcsfEnumMember]] = field(default_factory=dict)
+    enum: Optional[dict[str, OcsfEnumMember]] = None
     group: Optional[str] = None
     observable: Optional[int] = None
     profile: Optional[str | list[str]] = None
@@ -58,7 +58,7 @@ class OcsfAttr(OcsfModel):
 class OcsfObject(OcsfModel):
     caption: str
     name: str
-    description: str
+    description: Optional[str] = None
     attributes: dict[str, OcsfAttr] = field(default_factory=dict)
     extends: Optional[str] = None
     observable: Optional[int] = None

@@ -83,7 +83,7 @@ class DiffDeprecationInfo(ChangedModel[OcsfDeprecationInfo]):
 @dataclass
 class DiffType(ChangedModel[OcsfType]):
     caption: Difference[str] = field(default_factory=NoChange)
-    description: Difference[str] = field(default_factory=NoChange)
+    description: Difference[Optional[str]] = field(default_factory=NoChange)
     is_array: Difference[bool] = field(default_factory=NoChange)
     deprecated: Difference[Optional[DiffDeprecationInfo]] = field(default_factory=NoChange)
     max_len: Difference[Optional[int]] = field(default_factory=NoChange)
@@ -98,7 +98,7 @@ class DiffType(ChangedModel[OcsfType]):
 @dataclass
 class DiffAttr(ChangedModel[OcsfAttr]):
     caption: Difference[str] = field(default_factory=NoChange)
-    description: Difference[str] = field(default_factory=NoChange)
+    description: Difference[Optional[str]] = field(default_factory=NoChange)
     requirement: Difference[str] = field(default_factory=NoChange)
     type: Difference[str] = field(default_factory=NoChange)
     is_array: Difference[bool] = field(default_factory=NoChange)
@@ -115,7 +115,7 @@ class DiffObject(ChangedModel[OcsfObject]):
     caption: Difference[str] = field(default_factory=NoChange)
     name: Difference[str] = field(default_factory=NoChange)
     attributes: dict[str, Difference[OcsfAttr]] = field(default_factory=dict)
-    description: Difference[str] = field(default_factory=NoChange)
+    description: Difference[Optional[str]] = field(default_factory=NoChange)
     extends: Difference[Optional[str]] = field(default_factory=NoChange)
     observable: Difference[Optional[int]] = field(default_factory=NoChange)
     profiles: Difference[Optional[list[str]]] = field(default_factory=NoChange)
@@ -129,7 +129,6 @@ class DiffEvent(ChangedModel[OcsfEvent]):
     name: Difference[str] = field(default_factory=NoChange)
     attributes: dict[str, Difference[OcsfAttr]] = field(default_factory=dict)
     description: Difference[Optional[str]] = field(default_factory=NoChange)
-
     uid: Difference[Optional[int]] = field(default_factory=NoChange)
     category: Difference[Optional[str]] = field(default_factory=NoChange)
     extends: Difference[Optional[str]] = field(default_factory=NoChange)
