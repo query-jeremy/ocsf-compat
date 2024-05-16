@@ -1,3 +1,10 @@
+"""Compare OCSF schemata and print the differences.
+
+Example:
+
+    $ python -m ocsf_diff old_schema.json new_schema.json
+
+"""
 from argparse import ArgumentParser
 from pprint import pprint
 

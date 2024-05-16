@@ -5,8 +5,8 @@ from ocsf_diff.compare import compare, compare_dict
 from ocsf_diff.model import (
     Change,
     NoChange,
-    DiffAttr,
-    DiffEnumMember,
+    ChangedAttr,
+    ChangedEnumMember,
     Removal,
     Addition,
 )
@@ -15,6 +15,7 @@ from ocsf_schema import OcsfAttr, OcsfEnumMember
 
 def test_compare_primitives():
     """Test compare() on primitive arguments (int, bool, list[int], Optional[_], etc.)."""
+
     assert compare(1, 2) == Change(before=1, after=2)
     assert compare(True, False) == Change(before=True, after=False)
     assert compare(True, True) == NoChange[bool]()
@@ -28,11 +29,12 @@ def test_compare_primitives():
 
 def test_compare_scalar_properties():
     """Test compare() on scalar properties of an OcsfModel."""
+
     old_attr = OcsfAttr(caption="test1", description="", requirement="required", type="int_t")
     new_attr = OcsfAttr(caption="test2", description="", requirement="required", type="int_t")
     diff = compare(old_attr, new_attr)
 
-    assert isinstance(diff, DiffAttr)
+    assert isinstance(diff, ChangedAttr)
     assert diff.caption == Change(before="test1", after="test2")
     assert diff.description == NoChange()
     assert diff.requirement == NoChange()
@@ -41,20 +43,23 @@ def test_compare_scalar_properties():
 
 def test_compare_optional_property():
     """Test compare() on an optional property changing to and from None."""
+
     old_attr = OcsfAttr(caption="test1", group=None, description="", requirement="required", type="int_t")
     new_attr = OcsfAttr(caption="test2", group="test", description="", requirement="required", type="int_t")
     diff = compare(old_attr, new_attr)
 
-    assert isinstance(diff, DiffAttr)
+    assert isinstance(diff, ChangedAttr)
     assert diff.group == Change(before=None, after="test")
 
     diff = compare(new_attr, old_attr)
 
-    assert isinstance(diff, DiffAttr)
+    assert isinstance(diff, ChangedAttr)
     assert diff.group == Change(after=None, before="test")
 
 
 def test_compare_optional_dict_property():
+    """Test compare() on a property of type Optional[dict[_, _]] like OcsfAttr.enum."""
+
     old_attr = OcsfAttr(
         caption="test",
         description="",
@@ -77,7 +82,7 @@ def test_compare_optional_dict_property():
     )
 
     diff = compare(old_attr, new_attr)
-    assert isinstance(diff, DiffAttr)
+    assert isinstance(diff, ChangedAttr)
     assert diff.caption == NoChange()
 
     assert isinstance(diff.enum, dict)
@@ -89,6 +94,8 @@ def test_compare_optional_dict_property():
     assert diff.enum["99"] == Addition(after=OcsfEnumMember(caption="Unknown"))
 
 def test_compare_dict_two_dicts():
+    """Test compare_dict() on two dictionaries with different keys and values."""
+
     d1: dict[int, str] = {1: "a", 2: "b", 3: "c"}
     d2: dict[int, str] = {0: "a", 2: "b", 3: "d"}
 
@@ -104,10 +111,14 @@ def test_compare_dict_two_dicts():
     assert diff[3] == Change(before="c", after="d")
 
 def test_compare_dict_two_null():
+    """Test compare_dict() on two None values."""
+
     diff: Any = compare_dict(None, None)
     assert isinstance(diff, NoChange)
     
 def test_compare_dict_one_dict():
+    """Test compare_dict() on one dictionary and one None value."""
+
     d1: dict[int, str] = {1: "a", 2: "b", 3: "c"}
 
     diff = compare_dict(d1, None)
@@ -131,6 +142,8 @@ def test_compare_dict_one_dict():
     assert diff[3] == Addition(after="c")
 
 def test_compare_dict_ocsf_models():
+    """Test compare_dict() on two dictionaries with OcsfModel values."""
+
     e1 = {
         "1": OcsfEnumMember(caption="Other"),
         "2": OcsfEnumMember(caption="Success"),
@@ -147,7 +160,7 @@ def test_compare_dict_ocsf_models():
     diff = compare_dict(e1, e2)
     assert isinstance(diff, dict)
     assert diff["1"] == Removal(before=OcsfEnumMember(caption="Other"))
-    assert diff["2"] == DiffEnumMember(caption=Change(before="Success", after="Winning!"))
+    assert diff["2"] == ChangedEnumMember(caption=Change(before="Success", after="Winning!"))
     assert diff["3"] == NoChange()
     assert diff["4"] == NoChange()
     assert diff["5"] == Addition(after=OcsfEnumMember(caption="Flattened"))

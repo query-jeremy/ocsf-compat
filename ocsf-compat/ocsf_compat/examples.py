@@ -13,6 +13,8 @@ file, or environment variables. The structure of its checks should be reusable,
 its output standardized, and its methods constrained by the type system. But
 this should get the point across.
 """
+
+"""
 import os
 
 from ocsf_schema import from_file
@@ -69,3 +71,4 @@ for name, event in diff.classes.items():
                 if isinstance(attr.type, Change):
                     print(f"ERROR: {name}.{attr_name} changed from {attr.type.before} to {attr.type.after}")
                     # Any change of an attribute type could be a bad thing.
+"""
