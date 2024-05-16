@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 dacite = "^1.8.1" # TODO delete me after referencing a published ocsf-schema
+semver = "^3.0.2"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.4.2"
@@ -20,6 +21,12 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pyright]
 typeCheckingMode = "strict"
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: mark a test as an integration test",
+    "unit: mark a test as a unit test",
+]
 
 [tool.ruff]
 line-length = 120

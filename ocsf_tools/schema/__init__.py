@@ -1,4 +1,3 @@
-from .json import from_json, to_json, to_dict, from_file, to_file, keys_to_names, names_to_keys
 from .model import (
     OcsfAttr,
     OcsfDeprecationInfo,
@@ -11,6 +10,8 @@ from .model import (
     OcsfVersion,
     OcsfT,
 )
+from .json import from_json, to_json, to_dict, from_file, to_file, keys_to_names, names_to_keys
+from .http import OcsfServerClient, from_http
 
 __all__ = [
     "from_json",
@@ -30,4 +31,6 @@ __all__ = [
     "OcsfModel",
     "keys_to_names",
     "names_to_keys",
+    "from_http",
+    "OcsfServerClient",
 ]
