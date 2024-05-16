@@ -1,5 +1,5 @@
 import os
-from ocsf_schema import OcsfEvent, from_json
+from ocsf_tools.schema import OcsfEvent, from_json
 
 LOCATION = os.path.dirname(os.path.abspath(__file__))
 SCHEMA_JSON = os.path.join(LOCATION, "schema.json")

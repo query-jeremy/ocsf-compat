@@ -16,10 +16,9 @@ from dataclasses import dataclass, field
 from typing import Any, TypeVar, Generic, Optional
 from abc import ABC
 
-from ocsf_schema import (
+from ocsf_tools.schema import (
     OcsfVersion,
     OcsfT,
-    OcsfModel,
     OcsfEnumMember,
     OcsfAttr,
     OcsfDeprecationInfo,

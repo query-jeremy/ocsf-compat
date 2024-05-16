@@ -4,7 +4,7 @@ from typing import Any, cast
 
 from dacite import from_dict
 
-from ocsf_schema.model import OcsfSchema
+from .model import OcsfSchema
 
 
 _KEY_TRANSFORMS = {

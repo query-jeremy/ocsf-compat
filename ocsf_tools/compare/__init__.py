@@ -14,6 +14,8 @@ from .model import (
     ChangedVersion,
     Difference,
     Removal,
+    NoChange,
+    SimpleDifference,
 )
 
 __all__ = [
@@ -32,4 +34,6 @@ __all__ = [
     "ChangedVersion",
     "Difference",
     "Removal",
+    "NoChange",
+    "SimpleDifference",
 ]

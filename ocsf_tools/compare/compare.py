@@ -24,15 +24,15 @@ from typing import (
 )
 from types import UnionType, NoneType
 
-from ocsf_schema.model import OcsfModel
-from ocsf_diff.model import (
+from ocsf_tools.schema import OcsfModel
+from .model import (
     Difference,
     Addition,
     Removal,
     Change,
     NoChange,
 )
-from ocsf_diff.factory import create_diff
+from .factory import create_diff
 
 
 T = TypeVar("T")

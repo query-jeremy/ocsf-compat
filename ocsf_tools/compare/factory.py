@@ -13,7 +13,7 @@ Example:
 """
 from typing import cast
 
-from ocsf_schema.model import (
+from ocsf_tools.schema import (
     OcsfSchema,
     OcsfEvent,
     OcsfObject,
@@ -24,7 +24,7 @@ from ocsf_schema.model import (
     OcsfEnumMember,
     OcsfT,
 )
-from ocsf_diff.model import (
+from .model import (
     ChangedSchema,
     ChangedEvent,
     ChangedObject,

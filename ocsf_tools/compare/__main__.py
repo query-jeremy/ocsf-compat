@@ -8,8 +8,8 @@ Example:
 from argparse import ArgumentParser
 from pprint import pprint
 
-from ocsf_schema import from_file
-from ocsf_diff.compare import compare
+from ocsf_tools.schema import from_file
+from ocsf_tools.compare import compare
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Compare two OCSF schemata")

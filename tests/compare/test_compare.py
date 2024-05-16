@@ -1,8 +1,7 @@
 # pyright: reportPrivateUsage = false
 from typing import Optional, Any
 
-from ocsf_diff.compare import compare, compare_dict
-from ocsf_diff.model import (
+from ocsf_tools.compare import (compare, compare_dict,
     Change,
     NoChange,
     ChangedAttr,
@@ -10,7 +9,7 @@ from ocsf_diff.model import (
     Removal,
     Addition,
 )
-from ocsf_schema import OcsfAttr, OcsfEnumMember
+from ocsf_tools.schema import OcsfAttr, OcsfEnumMember
 
 
 def test_compare_primitives():
