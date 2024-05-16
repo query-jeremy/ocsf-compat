@@ -1,19 +1,18 @@
 [tool.poetry]
-name = "ocsf-schema"
+name = "ocsf-tools"
 version = "0.1.0"
-description = ""
+description = "Tools for working with the OCSF schema"
 authors = ["Jeremy Fisher <jeremy@query.ai>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-dacite = "^1.8.1"
+dacite = "^1.8.1" # TODO delete me after referencing a published ocsf-schema
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.4.2"
+pyright = "^1.1.361"
 pytest = "^8.2.0"
-jsons = "^1.6.3"
-pyright = "^1.1.360"
 
 [build-system]
 requires = ["poetry-core"]
