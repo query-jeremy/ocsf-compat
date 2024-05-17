@@ -1,8 +1,8 @@
-
 from dataclasses import dataclass
 from ocsf_tools.compare import ChangedSchema, Change, ChangedEvent, ChangedObject, ChangedAttr
 from ocsf_tools.schema import OcsfElementType
 from ocsf_tools.validation import Rule, Finding, RuleMetadata
+
 
 @dataclass
 class ChangedTypeFinding(Finding):
@@ -45,4 +45,3 @@ class NoChangedTypesRule(Rule[ChangedSchema]):
                             )
 
         return findings
-

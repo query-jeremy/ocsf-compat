@@ -1,34 +1,21 @@
-
-from typing import Optional
-from .validator import Finding, Severity, ValidationFindings, Context
-
-class FindingFormatter:
-    def __init__(self, severities: Optional[dict[Severity, str]] = None):
-        self._severities = severities if severities else {}
-
-    def severity(self, finding: Finding) -> Severity:
-        name = finding.__class__.__name__
-        if name in self._severities:
-            return Severity(self._severities[name])
-
-        raise ValueError(f"No severity found for {name}")
-
-    def format(self, finding: Finding) -> str:
-        return f"  [{self.severity(finding)}] {finding.message()}"
+from .validator import Finding, ValidationFindings, Context
 
 
 class ValidationFormatter:
-    def __init__(self, finding_formatter: FindingFormatter):
-        self._finding_formatter = finding_formatter
+    def format_finding(self, finding: Finding) -> str:
+        return f"  [{finding.severity.upper()}] {finding.message()}"
 
     def format(self, findings: ValidationFindings[Context]) -> str:
         output = ""
         for rule, rule_findings in findings.items():
             name = rule.metadata().name
+            output += "=" * len(name) + "\n"
             output += f"{name}\n"
             output += "=" * len(name) + "\n"
 
             for finding in rule_findings:
-                output += self._finding_formatter.format(finding) + "\n"
+                output += self.format_finding(finding) + "\n"
+
+            output += "\n"
 
         return output

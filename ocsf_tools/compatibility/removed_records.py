@@ -1,7 +1,7 @@
-
 from dataclasses import dataclass
 from ocsf_tools.compare import ChangedSchema, Removal
 from ocsf_tools.validation import Rule, Finding, RuleMetadata
+
 
 @dataclass
 class RemovedRecordFinding(Finding):
@@ -10,13 +10,15 @@ class RemovedRecordFinding(Finding):
 
     def _kind(self) -> str:
         raise NotImplementedError()
-    
+
     def message(self) -> str:
         return f"{self._kind()} {self.name} ({self.caption}) was removed"
+
 
 class RemovedObjectFinding(RemovedRecordFinding):
     def _kind(self) -> str:
         return "Object"
+
 
 class RemovedEventFinding(RemovedRecordFinding):
     def _kind(self) -> str:

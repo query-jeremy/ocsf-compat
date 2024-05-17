@@ -1,14 +1,13 @@
-
-from .validator import Rule, Validator, Finding, RuleMetadata, Severity
-from .formatting import FindingFormatter, ValidationFormatter
+from .validator import Rule, Validator, Finding, RuleMetadata, Severity, validate_severities
+from .formatting import ValidationFormatter
 
 
 __all__ = [
-    "Rule",
-    "Validator",
     "Finding",
+    "Rule",
     "RuleMetadata",
     "Severity",
-    "FindingFormatter",
     "ValidationFormatter",
+    "Validator",
+    "validate_severities",
 ]
