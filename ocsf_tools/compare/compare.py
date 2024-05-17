@@ -41,7 +41,7 @@ K = TypeVar("K")
 
 def compare_dict(old_val: dict[K, T] | None, new_val: dict[K, T] | None) -> dict[K, Difference[T]] | NoChange[T]:
     """Compare two dictionaries and return the differences.
-    
+
     If both arguments are None, the result will be a NoChange object.
 
     If either argument is a dictionary, the result will be a dictionary with all
@@ -92,7 +92,7 @@ def is_optional_dict(
     value: dict[Any, Any] | None, origin: type | UnionType, args: tuple[type, ...]
 ) -> TypeGuard[dict[Any, Any] | None]:
     """Check if a value is a dictionary or an Optional[dict].
-    
+
     Args:
         value: The value to test.
         origin: The origin of the type hint (see: typing.get_origin).
@@ -114,13 +114,13 @@ def is_optional_dict(
 
 def compare(old_val: T, new_val: T) -> Difference[T]:
     """Compare two values of the same type and return a Difference.
-    
+
     If the values are primitives (int, bool, list[int], etc.), the result will
     always be a Change or a NoChange object.
 
     If the values are OcsfModel objects, the result will be a ChangedModel of
     the corresponding type (OcsfSchema -> ChangedSchema, etc.).
-        
+
     The attributes of the resulting ChangedModel will all be Differences or, in
     the case of dictionaries, a dict[K, Difference[_]].
 

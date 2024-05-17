@@ -1,7 +1,7 @@
-
-from dataclasses import dataclass, field
-from typing import Any, Optional, TypeVar
 from abc import ABC
+from dataclasses import dataclass, field
+from enum import StrEnum
+from typing import Any, Optional, TypeVar
 
 
 class OcsfModel(ABC): ...
@@ -93,6 +93,14 @@ class OcsfSchema(OcsfModel):
 
 
 OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
+
+
+class OcsfElementType(StrEnum):
+    EVENT = "Event"
+    OBJECT = "Object"
+    ENUM_MEMBER = "Enum Member"
+    ATTRIBUTE = "Attribute"
+
 
 """
 @dataclass

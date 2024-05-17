@@ -9,6 +9,7 @@ schema = OcsfServerClient().get_schema("1.0.0")
 ```
 
 """
+
 import logging
 import json
 
@@ -22,6 +23,7 @@ from .model import OcsfSchema
 from .json import from_json, from_file, to_file
 
 LOG = logging.getLogger(__name__)
+
 
 def _is_semver(version: str) -> bool:
     try:
@@ -52,7 +54,7 @@ class OcsfServerClient:
             if "version" not in version:
                 LOG.warning(f"Invalid version in response from {url}: {version}")
             result.append(version["version"])
-            
+
         return result
 
     def get_schema(self, version: Optional[str] = None) -> OcsfSchema:
@@ -62,7 +64,7 @@ class OcsfServerClient:
 
             if not version in self.get_versions():
                 raise ValueError(f"Version {version} not found on server")
-        
+
             if self._cache_dir is not None:
                 if not self._cache_dir.exists():
                     LOG.debug(f"Creating cache directory: {self._cache_dir}")
@@ -72,7 +74,7 @@ class OcsfServerClient:
                 if file.exists():
                     LOG.info(f"Reading schema from cache: {file}")
                     return from_file(str(file))
-        
+
         schema = self._fetch_schema(version)
 
         if self._cache_dir is not None:
@@ -81,24 +83,19 @@ class OcsfServerClient:
             to_file(schema, dest)
 
         return schema
-            
 
     def _fetch_schema(self, version: Optional[str] = None) -> OcsfSchema:
         if version is not None:
             url = urljoin(self._base_url, version)
         else:
             url = self._base_url
-        
+
         url = urljoin(url, "export/schema")
 
         LOG.debug(f"Fetching schema from {url}")
         json_str = urlopen(url).read()
         return from_json(json_str)
 
+
 def from_http(version: Optional[str] = None) -> OcsfSchema:
     return OcsfServerClient().get_schema(version)
-
-
-
-
-    

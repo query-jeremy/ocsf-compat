@@ -1,7 +1,9 @@
 # pyright: reportPrivateUsage = false
 from typing import Optional, Any
 
-from ocsf_tools.compare import (compare, compare_dict,
+from ocsf_tools.compare import (
+    compare,
+    compare_dict,
     Change,
     NoChange,
     ChangedAttr,
@@ -37,7 +39,7 @@ def test_compare_scalar_properties():
     assert diff.caption == Change(before="test1", after="test2")
     assert diff.description == NoChange()
     assert diff.requirement == NoChange()
-    assert diff.enum == NoChange() #{}
+    assert diff.enum == NoChange()  # {}
 
 
 def test_compare_optional_property():
@@ -92,6 +94,7 @@ def test_compare_optional_dict_property():
     assert diff.enum["1"] == NoChange()
     assert diff.enum["99"] == Addition(after=OcsfEnumMember(caption="Unknown"))
 
+
 def test_compare_dict_two_dicts():
     """Test compare_dict() on two dictionaries with different keys and values."""
 
@@ -109,12 +112,14 @@ def test_compare_dict_two_dicts():
     assert diff[2] == NoChange()
     assert diff[3] == Change(before="c", after="d")
 
+
 def test_compare_dict_two_null():
     """Test compare_dict() on two None values."""
 
     diff: Any = compare_dict(None, None)
     assert isinstance(diff, NoChange)
-    
+
+
 def test_compare_dict_one_dict():
     """Test compare_dict() on one dictionary and one None value."""
 
@@ -139,6 +144,7 @@ def test_compare_dict_one_dict():
     assert diff[1] == Addition(after="a")
     assert diff[2] == Addition(after="b")
     assert diff[3] == Addition(after="c")
+
 
 def test_compare_dict_ocsf_models():
     """Test compare_dict() on two dictionaries with OcsfModel values."""

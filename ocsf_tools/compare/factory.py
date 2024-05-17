@@ -11,6 +11,7 @@ Example:
     >>> print(diff) # ChangedSchema(...)
 
 """
+
 from typing import cast
 
 from ocsf_tools.schema import (
@@ -44,10 +45,10 @@ def create_diff(model: OcsfT) -> ChangedModel[OcsfT]:
     two instances of the corresponding OCSF model. There is a specific
     ChangeModel for every OCSF model type, like ChangedSchema for OcsfSchema,
     ChangedEvent for OcsfEvent, etc.
-    
+
     Args:
         model: The OCSF model to create a diff for. Must be a subclass of OcsfModel, like OcsfAttr or OcsfEvent.
-    
+
     Returns:
         A ChangedModel instance that corresponds to the given OCSF model.
 
