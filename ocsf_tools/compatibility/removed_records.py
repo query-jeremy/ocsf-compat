@@ -25,10 +25,12 @@ class RemovedObjectFinding(RemovedRecordFinding):
     def _kind(self):
         return OcsfElementType.OBJECT
 
+
 @dataclass
 class RemovedEventFinding(RemovedRecordFinding):
     def _kind(self):
         return OcsfElementType.EVENT
+
 
 @dataclass
 class RemovedAttrFinding(RemovedRecordFinding):
@@ -39,6 +41,7 @@ class RemovedAttrFinding(RemovedRecordFinding):
 
     def message(self) -> str:
         return f"{self._kind()} {'.'.join(self.parent + (self.name,))} ({self.caption}) was removed"
+
 
 @dataclass
 class RemovedEnumMemberFinding(RemovedRecordFinding):
@@ -69,14 +72,20 @@ class NoRemovedRecordsRule(Rule[ChangedSchema]):
                 # While we're here, got any removed attributes?
                 for attr_name, attr in event.attributes.items():
                     if isinstance(attr, Removal):
-                        findings.append(RemovedAttrFinding(attr_name, attr.before.caption, (OcsfElementType.EVENT, name)))
+                        findings.append(
+                            RemovedAttrFinding(attr_name, attr.before.caption, (OcsfElementType.EVENT, name))
+                        )
 
                     elif isinstance(attr, ChangedAttr):
                         # Or how about removed enum members?
                         if isinstance(attr.enum, dict):
                             for member_key, member in attr.enum.items():
                                 if isinstance(member, Removal):
-                                    findings.append(RemovedEnumMemberFinding(member_key, member.before.caption, (OcsfElementType.EVENT, name, attr_name)))
+                                    findings.append(
+                                        RemovedEnumMemberFinding(
+                                            member_key, member.before.caption, (OcsfElementType.EVENT, name, attr_name)
+                                        )
+                                    )
 
         # Now do the same as above, but for objects. These two loops could
         # probably be factored together, but this way is more straightforward.
@@ -87,12 +96,18 @@ class NoRemovedRecordsRule(Rule[ChangedSchema]):
             elif isinstance(obj, ChangedObject):
                 for attr_name, attr in obj.attributes.items():
                     if isinstance(attr, Removal):
-                        findings.append(RemovedAttrFinding(attr_name, attr.before.caption, (OcsfElementType.OBJECT, name)))
+                        findings.append(
+                            RemovedAttrFinding(attr_name, attr.before.caption, (OcsfElementType.OBJECT, name))
+                        )
 
                     elif isinstance(attr, ChangedAttr):
                         if isinstance(attr.enum, dict):
                             for member_key, member in attr.enum.items():
                                 if isinstance(member, Removal):
-                                    findings.append(RemovedEnumMemberFinding(member_key, member.before.caption, (OcsfElementType.OBJECT, name, attr_name)))
+                                    findings.append(
+                                        RemovedEnumMemberFinding(
+                                            member_key, member.before.caption, (OcsfElementType.OBJECT, name, attr_name)
+                                        )
+                                    )
 
         return findings

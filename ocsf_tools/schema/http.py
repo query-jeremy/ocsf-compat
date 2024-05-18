@@ -42,15 +42,19 @@ def _is_semver(version: str) -> bool:
     except ValueError:
         return False
 
+
 # Models representing the response from the OCSF server's /api/versions endpoint.
 @dataclass
 class OcsfServerVersion:
     url: str
     version: str
+
+
 @dataclass
 class OcsfServerVersions:
     default: OcsfServerVersion
     versions: list[OcsfServerVersion]
+
 
 class OcsfServerClient:
     """A simple caching OCSF server client.
@@ -73,7 +77,6 @@ class OcsfServerClient:
         else:
             self._cache_dir = cache_dir
 
-
     def _fetch_schema(self, version: Optional[str] = None) -> OcsfSchema:
         """Fetch a schema from the server."""
         if version is not None:
@@ -87,13 +90,11 @@ class OcsfServerClient:
         json_str = urlopen(url).read()
         return from_json(json_str)
 
-
     def _fetch_versions(self) -> OcsfServerVersions:
         """Fetch the available versions from the server."""
         url = urljoin(self._base_url, "api/versions")
         data = json.loads(urlopen(url).read())
         return from_dict(OcsfServerVersions, data)
-
 
     def get_versions(self) -> list[str]:
         """Return the available schema versions on the server."""
@@ -102,7 +103,6 @@ class OcsfServerClient:
 
         return [v.version for v in self._versions.versions]
 
-
     def get_default_version(self) -> str:
         """Return the server's default schema version."""
         if self._versions is None:
@@ -110,10 +110,9 @@ class OcsfServerClient:
 
         return self._versions.default.version
 
-
     def get_schema(self, version: Optional[str] = None) -> OcsfSchema:
         """Get a schema from the cache or from the server.
-        
+
         If version is None, the server's default version is used. The cache will
         not be read, but it will be updated.
 
@@ -127,7 +126,7 @@ class OcsfServerClient:
         Args:
             version: The version of the schema to fetch. If None, the server's
                 default version is used.
-        
+
         Returns:
             The requested OcsfSchema.
 

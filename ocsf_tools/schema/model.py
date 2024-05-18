@@ -1,7 +1,4 @@
-"""This module contains the dataclasses that represent the OCSF schema.
-
-
-"""
+"""This module contains the dataclasses that represent the OCSF schema."""
 
 from abc import ABC
 from dataclasses import dataclass, field
@@ -21,6 +18,7 @@ class OcsfVersion(OcsfModel):
 @dataclass
 class OcsfEnumMember(OcsfModel):
     """An enum member. Enums are dictionaries of str: OcsfEnumMember."""
+
     caption: str
     description: Optional[str] = None
     notes: Optional[str] = None
@@ -29,6 +27,7 @@ class OcsfEnumMember(OcsfModel):
 @dataclass
 class OcsfDeprecationInfo(OcsfModel):
     """Deprecation information for an object, event, or attribute."""
+
     message: str
     since: str
 
@@ -36,6 +35,7 @@ class OcsfDeprecationInfo(OcsfModel):
 @dataclass
 class OcsfType(OcsfModel):
     """A data type definition."""
+
     caption: str
     description: Optional[str] = None
     is_array: bool = False
@@ -52,6 +52,7 @@ class OcsfType(OcsfModel):
 @dataclass
 class OcsfAttr(OcsfModel):
     """An attribute definition."""
+
     caption: str
     requirement: str
     type: str
@@ -68,6 +69,7 @@ class OcsfAttr(OcsfModel):
 @dataclass
 class OcsfObject(OcsfModel):
     """An object definition."""
+
     caption: str
     name: str
     description: Optional[str] = None
@@ -82,6 +84,7 @@ class OcsfObject(OcsfModel):
 @dataclass
 class OcsfEvent(OcsfModel):
     """An event definition."""
+
     caption: str
     name: str
     attributes: dict[str, OcsfAttr] = field(default_factory=dict)
@@ -98,6 +101,7 @@ class OcsfEvent(OcsfModel):
 @dataclass
 class OcsfSchema(OcsfModel):
     """The root of an OCSF schema."""
+
     version: str
     classes: dict[str, OcsfEvent] = field(default_factory=dict)
     objects: dict[str, OcsfObject] = field(default_factory=dict)

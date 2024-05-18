@@ -7,6 +7,7 @@ schema = from_file("schema.json")
 ```
 
 """
+
 import json
 from dataclasses import asdict
 from typing import Any, cast

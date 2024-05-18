@@ -4,8 +4,8 @@ from typing import cast
 import logging
 import sys
 
-from ocsf_tools.schema import from_file, OcsfServerClient
-from ocsf_tools.validation import Severity, ValidationFormatter, validate_severities
+from ocsf_tools.schema import get_schema, OcsfServerClient
+from ocsf_tools.validation import Severity, ValidationFormatter, validate_severities, count_severity
 from ocsf_tools.compare import compare, ChangedSchema
 
 from .validator import CompatibilityValidator
@@ -89,17 +89,13 @@ if "after" not in config:
     exit(1)
 
 client = OcsfServerClient(cache_dir=config.get("cache", None))
-
-try:
-    before = from_file(config["before"])
-except FileNotFoundError:
-    before = client.get_schema(config["before"])
-
-try:
-    after = from_file(config["after"])
-except FileNotFoundError:
-    after = client.get_schema(config["after"])
+before = get_schema(config["before"], client)
+after = get_schema(config["after"], client)
 
 validator = CompatibilityValidator(cast(ChangedSchema, compare(before, after)), severities)
 formatter = ValidationFormatter()
-print(formatter.format(validator.validate()))
+results = validator.validate()
+print(formatter.format(results))
+
+if count_severity(results, Severity.ERROR) > 0 or count_severity(results, Severity.FATAL) > 0:
+    exit(1)

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from ocsf_tools.compare import ChangedSchema, NoChange, ChangedEvent, ChangedAttr, Removal, Addition
 from ocsf_tools.validation import Rule, Finding, RuleMetadata
 
+
 @dataclass
 class ChangedClassUidFinding(Finding):
     event: str

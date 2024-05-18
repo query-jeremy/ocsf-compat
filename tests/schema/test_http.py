@@ -12,6 +12,7 @@ def setup() -> OcsfServerClient:
 
 @pytest.mark.integration
 def test_get_versions():
+    """Test fetching versions from the OCSF server."""
     versions = setup().get_versions()
 
     assert isinstance(versions, list)
@@ -23,6 +24,7 @@ def test_get_versions():
 
 @pytest.mark.integration
 def test_get_schema_default():
+    """Test fetching the schema from the OCSF server without a version number."""
     s = setup().get_schema()
     assert isinstance(s, OcsfSchema)
     assert isinstance(Version.parse(s.version), Version)
@@ -32,6 +34,7 @@ def test_get_schema_default():
 
 @pytest.mark.integration
 def test_get_schema_version():
+    """Test fetching the schema from the OCSF server with a version number."""
     s = setup().get_schema("1.2.0")
     assert isinstance(s, OcsfSchema)
     assert s.version == "1.2.0"

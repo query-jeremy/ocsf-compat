@@ -5,17 +5,17 @@ two data encountered in the OCSF schema, but especially between OCSF schema
 models (events, objects, attributes, etc.).
 
 ```
-                       Difference[T]                                     
-                           │                                            
-            ┌──────────────┴──────────────┬──────────────────────┐      
-            │                             │                      │      
+                       Difference[T]
+                           │
+            ┌──────────────┴──────────────┬──────────────────────┐
+            │                             │                      │
   SimpleDifference[T]               ChangedModel[T]           NoChange[T]
-            │                             │                             
-            │                             │                             
-Addition[T]─┼─Removal[T]   ChangedObject──┼──ChangedSchema              
-            │                             │                             
-            │                             │                             
-        Change[T]            ChangedEvent─┴─ChangedAttr                      
+            │                             │
+            │                             │
+Addition[T]─┼─Removal[T]   ChangedObject──┼──ChangedSchema
+            │                             │
+            │                             │
+        Change[T]            ChangedEvent─┴─ChangedAttr
 ```
 
 At the top of the hierarchy is the abstract class Difference[T].

@@ -8,7 +8,7 @@ A Validator contains Rules that produce Findings.
 Validators and Rules are generic, so they can be used with an appropriate
 Context. The context on which they operate may be an OCSF repository, a schema,
 etc.
- 
+
 Rules perform checks on the validator context and yield Findings if they find
 any violations (or bendings) of the rule they represent. See the compatibility
 package for examples.
@@ -37,6 +37,7 @@ Context = TypeVar("Context")
 
 class Severity(StrEnum):
     """Severity levels."""
+
     INFO = "info"
     WARNING = "warning"
     ERROR = "error"
@@ -46,7 +47,7 @@ class Severity(StrEnum):
 @dataclass(init=False)
 class Finding(ABC):
     """Findings are the results of validation rules.
-    
+
     Findings should be specifically typed; that is, each rule should produce one
     or more distinct types of findings. Validators can assign severity based on
     the finding class, but the default severity can be set by overriding
@@ -77,7 +78,7 @@ class Finding(ABC):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}: {self.message()}"
-    
+
     def __str__(self) -> str:
         return self.message()
 
@@ -85,12 +86,14 @@ class Finding(ABC):
 @dataclass
 class RuleMetadata:
     """Metadata for a rule."""
+
     name: str
     description: str = ""
 
 
 class Rule(ABC, Generic[Context]):
     """A validation rule."""
+
     def __hash__(self):
         return hash(self.__class__)
 
@@ -109,8 +112,10 @@ class Rule(ABC, Generic[Context]):
 
 ValidationFindings = dict[Rule[Context], list[Finding]]
 
+
 class Validator(ABC, Generic[Context]):
     """A simple validation harness."""
+
     def __init__(self, context: Context, severities: Optional[dict[str, Severity]] = None):
         """Initialize the validator.
 
@@ -128,7 +133,7 @@ class Validator(ABC, Generic[Context]):
 
     def _override_severity(self, finding: Finding) -> None:
         """Override the severity of a finding.
-        
+
         Findings have default severities, but here we override those if we find
         an entry in the severities map. This allows the validator or its users
         to configure different severity levels for each class of finding.
@@ -175,7 +180,7 @@ def count_severity(findings: ValidationFindings[Context], severity: Severity) ->
 
 def validate_severities(severities: dict[str, Severity]) -> bool:
     """Validate a map of finding class names to severities.
-    
+
     This is a utility function to ensure that all class names and severities in the map are valid.
 
     Args:
