@@ -1,3 +1,8 @@
+"""This module contains the dataclasses that represent the OCSF schema.
+
+
+"""
+
 from abc import ABC
 from dataclasses import dataclass, field
 from enum import StrEnum
@@ -7,6 +12,7 @@ from typing import Any, Optional, TypeVar
 class OcsfModel(ABC): ...
 
 
+# TODO: is this used?
 @dataclass
 class OcsfVersion(OcsfModel):
     version: str
@@ -14,6 +20,7 @@ class OcsfVersion(OcsfModel):
 
 @dataclass
 class OcsfEnumMember(OcsfModel):
+    """An enum member. Enums are dictionaries of str: OcsfEnumMember."""
     caption: str
     description: Optional[str] = None
     notes: Optional[str] = None
@@ -21,12 +28,14 @@ class OcsfEnumMember(OcsfModel):
 
 @dataclass
 class OcsfDeprecationInfo(OcsfModel):
+    """Deprecation information for an object, event, or attribute."""
     message: str
     since: str
 
 
 @dataclass
 class OcsfType(OcsfModel):
+    """A data type definition."""
     caption: str
     description: Optional[str] = None
     is_array: bool = False
@@ -42,6 +51,7 @@ class OcsfType(OcsfModel):
 
 @dataclass
 class OcsfAttr(OcsfModel):
+    """An attribute definition."""
     caption: str
     requirement: str
     type: str
@@ -57,6 +67,7 @@ class OcsfAttr(OcsfModel):
 
 @dataclass
 class OcsfObject(OcsfModel):
+    """An object definition."""
     caption: str
     name: str
     description: Optional[str] = None
@@ -70,6 +81,7 @@ class OcsfObject(OcsfModel):
 
 @dataclass
 class OcsfEvent(OcsfModel):
+    """An event definition."""
     caption: str
     name: str
     attributes: dict[str, OcsfAttr] = field(default_factory=dict)
@@ -85,6 +97,7 @@ class OcsfEvent(OcsfModel):
 
 @dataclass
 class OcsfSchema(OcsfModel):
+    """The root of an OCSF schema."""
     version: str
     classes: dict[str, OcsfEvent] = field(default_factory=dict)
     objects: dict[str, OcsfObject] = field(default_factory=dict)
@@ -92,6 +105,7 @@ class OcsfSchema(OcsfModel):
     base_event: Optional[OcsfEvent] = None
 
 
+# A type variable constrained to OCSF models.
 OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
 
 
@@ -100,37 +114,4 @@ class OcsfElementType(StrEnum):
     OBJECT = "Object"
     ENUM_MEMBER = "Enum Member"
     ATTRIBUTE = "Attribute"
-
-
-"""
-@dataclass
-class OcsfDictionaryTypes(OcsfModel):
-    caption: str
-    description: str
-    attributes: OcsfAttributes = field(default_factory=dict)
-
-
-@dataclass
-class OcsfDictionary(OcsfModel):
-    caption: str
-    description: str
-    name: str
-    types: OcsfDictionaryTypes
-    attributes: OcsfAttributes = field(default_factory=dict)
-
-
-@dataclass
-class OcsfCategory(OcsfModel):
-    caption: str
-    description: str
-    uid: int
-    type: Optional[str] = None
-
-
-@dataclass
-class OcsfCategories(OcsfModel):
-    caption: str
-    description: str
-    name: str
-    attributes: dict[str, OcsfCategory] = field(default_factory=dict)
-"""
+    TYPE = "Type"

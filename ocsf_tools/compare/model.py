@@ -1,15 +1,47 @@
-"""Model for comparing OCSF schemata
+"""Models representing comparisons of OCSF schema elements.
 
-Notes:
- - Everything inherits from Difference[T]
- - None has been replaced with NoChange[T]
- - Dicts of [str, OcsfModel] always have all keys from both operands.
- - Be warned that OcsfAttr.enum is Optional[dict[str, OcsfEnumMember]] and so it may be NoChange[OcsfEnumMember] instead of an empty dict.
- - Dicts of primitives:
-    - OcsfInclude.annotations
-    - OcsfProfile.annotations
-    - OcsfObject.constraints
-    - OcsfEvent.constraints
+This module provides a class hierarchy for representing differences between any
+two data encountered in the OCSF schema, but especially between OCSF schema
+models (events, objects, attributes, etc.).
+
+```
+                       Difference[T]                                     
+                           │                                            
+            ┌──────────────┴──────────────┬──────────────────────┐      
+            │                             │                      │      
+  SimpleDifference[T]               ChangedModel[T]           NoChange[T]
+            │                             │                             
+            │                             │                             
+Addition[T]─┼─Removal[T]   ChangedObject──┼──ChangedSchema              
+            │                             │                             
+            │                             │                             
+        Change[T]            ChangedEvent─┴─ChangedAttr                      
+```
+
+At the top of the hierarchy is the abstract class Difference[T].
+
+NoChange is a special case of Difference that represents the absence of any
+difference. None is not used because T may be or contain NoneType.
+
+The SimpleDifference[T] classes represent differences between any values.
+Addition[T] and Removal[T] represent changes to a set or dictionary, while
+Change[T] represents a change to a single value. These objects will contain a
+before: T, after: T, or both as is appropriate.
+
+The ChangedModel[T] classes represents a change to an OCSF model. Every model in
+the schema package has a corresponding concrete ChangedModel class. These classes
+contain fields for each attribute of the model, each of which is a
+Difference[T].
+
+Note that dictionaries get special treatment. Properties of OcsfModel that are
+dictionaries will be represented as a dict[str, Difference]. When compared, the
+dictionary will contain all keys from both operands. At each key will be the
+Difference between values for that key. These may be Addition, Removal, Change,
+NoChange, or a ChangedModel.
+
+When modeling Optional dictionaries, be sure to use a type that is a Union of
+the appropriate dict and NoChange. See ChangedAttr.enum for an example.
+
 """
 
 from dataclasses import dataclass, field
@@ -55,7 +87,7 @@ class Change(SimpleDifference[T]):
 
 
 @dataclass
-class NoChange(SimpleDifference[T]): ...
+class NoChange(Difference[T]): ...
 
 
 class ChangedModel(Difference[OcsfT]): ...

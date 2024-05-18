@@ -13,8 +13,11 @@ class ValidationFormatter:
             output += f"{name}\n"
             output += "=" * len(name) + "\n"
 
-            for finding in rule_findings:
-                output += self.format_finding(finding) + "\n"
+            if len(rule_findings) == 0:
+                output += "  [SUCCESS] No findings\n"
+            else:
+                for finding in rule_findings:
+                    output += self.format_finding(finding) + "\n"
 
             output += "\n"
 

@@ -77,6 +77,7 @@ if args.fatal:
         for f in finding:
             severities[f] = Severity.FATAL
 
+# TODO: import all relevant Finding classes or this will fail
 validate_severities(severities)
 
 if "before" not in config:
