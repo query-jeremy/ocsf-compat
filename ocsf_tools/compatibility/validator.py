@@ -1,3 +1,5 @@
+"""A backwards compatibility validator."""
+
 from ocsf_tools.compare import ChangedSchema
 from ocsf_tools.validation import Rule, Validator
 

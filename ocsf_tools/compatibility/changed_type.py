@@ -1,3 +1,4 @@
+"""A validation rule to identify changed attribute types."""
 from dataclasses import dataclass
 from ocsf_tools.compare import ChangedSchema, Change, ChangedEvent, ChangedObject, ChangedAttr
 from ocsf_tools.schema import OcsfElementType
