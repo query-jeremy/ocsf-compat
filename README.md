@@ -45,10 +45,11 @@ $ poetry run python -m ocsf_tools.compatibility --before 1.0.0 --after 1.2.0 --c
 
 ### PyPI
 The easiest way to install `ocsf-tools` is from PyPI using `pip` or `poetry`:
-**NOTE**: Not actually published to PyPI yet.
 ```sh
 $ pip install ocsf-tools
 ```
+**NOTE**: This is not actually published to PyPI yet.
+
 
 ### From Source
 If you want to work with the source, the recommended installation is with `asdf` and `poetry`.
@@ -89,5 +90,5 @@ Running integration tests:
 $ poetry run pytest -m integration
 ```
 **NOTE**: Some of the integration tests require an OCSF server instance, and are
-*using the public instance at [https://schema.ocsf.io](https://schema.ocsf.io).
-*This should probably use a local instance of the OCSF server instead.
+using the public instance at [https://schema.ocsf.io](https://schema.ocsf.io).
+This should probably use a local instance of the OCSF server instead.
