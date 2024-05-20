@@ -14,12 +14,21 @@ class IncreasedRequirementFinding(Finding):
     after: str
 
     def message(self) -> str:
-        return f"Requirement of {self.element_type} {'.'.join(self.path)} changed from {self.before} to {self.after}"
+        return (
+            f"Requirement of {self.element_type.lower()} {'.'.join(self.path)} changed"
+            + f" from {self.before} to {self.after}"
+        )
 
 
 class NoIncreasedRequirementsRule(Rule[ChangedSchema]):
     def metadata(self):
-        return RuleMetadata("No increased requirements")
+        return RuleMetadata(
+            "No increased requirements",
+            "When the requirement of an attribute changes from optional or recommended to required, "
+            + "previously valid records may no longer be valid, breaking backwards compatibility. If you "
+            + "wish to increase the strength of the requirement, you may change the requirement from "
+            + "optional to recommended without breaking backwards compatibility.",
+        )
 
     def validate(self, context: ChangedSchema) -> list[Finding]:
         findings: list[Finding] = []

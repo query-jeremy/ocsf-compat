@@ -88,7 +88,7 @@ class RuleMetadata:
     """Metadata for a rule."""
 
     name: str
-    description: str = ""
+    description: Optional[str] = None
 
 
 class Rule(ABC, Generic[Context]):
@@ -190,7 +190,14 @@ def validate_severities(severities: dict[str, Severity]) -> bool:
         ValueError: If an invalid severity value is found.
     """
     for cls, severity in severities.items():
-        if severity not in Severity or cls not in globals():
+        if severity not in [s.value for s in Severity]:
             raise ValueError(f"Invalid severity value: {cls} = {severity}")
+        # if cls not in globals(): # why doesn't this work?
+        if False:
+            print(f"[{cls}]")
+            for k in globals():
+                if "Finding" in k:
+                    print("found", cls)
+            raise ValueError(f"Invalid finding name: {cls} = {severity}")
 
     return True

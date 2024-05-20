@@ -15,12 +15,19 @@ class ChangedTypeFinding(Finding):
     after: str | None
 
     def message(self) -> str:
-        return f"Type of {self.element_type} {self.record}.{self.attr} changed from {self.before} to {self.after}"
+        return (
+            f"Type of {self.element_type.lower()} {self.record}.{self.attr} "
+            + f"changed from {self.before} to {self.after}"
+        )
 
 
 class NoChangedTypesRule(Rule[ChangedSchema]):
     def metadata(self):
-        return RuleMetadata("No changed attribute types")
+        return RuleMetadata(
+            "No changed attribute types",
+            "Changing the type of an attribute can break backwards compatibility in some encodings, "
+            + "so any change to an attribute's data type is considered breaking.",
+        )
 
     def validate(self, context: ChangedSchema) -> list[Finding]:
         findings: list[Finding] = []

@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 dacite = "^1.8.1" # TODO delete me after referencing a published ocsf-schema
 semver = "^3.0.2"
+termcolor = "^2.4.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.4.2"
