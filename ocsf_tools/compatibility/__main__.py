@@ -1,4 +1,3 @@
-# type: ignore[reportUnusedImport]
 """
 This module is the entry point for the compatibility tool.
 
@@ -37,11 +36,23 @@ options:
 
 Examples:
 
-Compare a local schema file to 1.0.0 from the OCSF server:
+Validate a schema defined in a file is compatible with 1.0.0 from the OCSF server:
 
     $ python -m ocsf_tools.compatibility --after ./schema.json --before 1.0.0
 
-    $ python -m ocsf_tools.compatibility --before 1.0.0 --after 1.1.0 --cache ./cache --config ./config.toml
+
+Validate two schema versions available from the OCSF server with a local cache:
+
+    $ python -m ocsf_tools.compatibility --before 1.0.0 --after 1.1.0 --cache ./schema_cache 
+
+Validate schemata using a configuration file: 
+
+    $ python -m ocsf_tools.compatibility --config ./config.toml
+
+Validate schemata but don't worry about removed enum members:
+
+    $ python -m ocsf_tools.compatibility --config ./config.toml --info RemovedEnumMember
+
 """
 
 import tomllib
@@ -88,14 +99,12 @@ if args.config:
     with open(args.config, "rb") as f:
         conf = tomllib.load(f)
 
-    if isinstance(conf, dict):
         if "before" in conf:
             config["before"] = conf["before"]
         if "after" in conf:
             config["after"] = conf["after"]
         if "cache" in conf:
             config["cache"] = conf["cache"]
-
         if "severity" in conf:
             sevs = conf["severity"]
             if isinstance(sevs, dict):
@@ -131,18 +140,7 @@ if args.fatal:
         for f in finding:
             severities[f] = Severity.FATAL
 
-# validate_severities checks that all finding names in a configuration exist in
-# globals(), so we import them here.
-from . import (
-    RemovedObjectFinding,
-    RemovedEventFinding,
-    RemovedAttrFinding,
-    RemovedEnumMemberFinding,
-    IncreasedRequirementFinding,
-    ChangedClassUidFinding,
-    ChangedTypeFinding,
-)
-
+# Check severity names
 validate_severities(severities)
 
 

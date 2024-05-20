@@ -181,7 +181,7 @@ def count_severity(findings: ValidationFindings[Context], severity: Severity) ->
 def validate_severities(severities: dict[str, Severity]) -> bool:
     """Validate a map of finding class names to severities.
 
-    This is a utility function to ensure that all class names and severities in the map are valid.
+    This is a utility function to ensure that all severities in the map are valid.
 
     Args:
         severities: A mapping of finding class names to severity levels.
@@ -189,15 +189,10 @@ def validate_severities(severities: dict[str, Severity]) -> bool:
     Raises:
         ValueError: If an invalid severity value is found.
     """
+    # TODO Ensure that the finding class names are valid.
+    sevs = [s.value for s in Severity]
     for cls, severity in severities.items():
-        if severity not in [s.value for s in Severity]:
+        if severity not in sevs:
             raise ValueError(f"Invalid severity value: {cls} = {severity}")
-        # if cls not in globals(): # why doesn't this work?
-        if False:
-            print(f"[{cls}]")
-            for k in globals():
-                if "Finding" in k:
-                    print("found", cls)
-            raise ValueError(f"Invalid finding name: {cls} = {severity}")
-
+    
     return True
