@@ -2,7 +2,7 @@ import os
 from ocsf_tools.schema import OcsfEvent, from_json
 
 LOCATION = os.path.dirname(os.path.abspath(__file__))
-SCHEMA_JSON = os.path.join(LOCATION, "schema.json")
+SCHEMA_JSON = os.path.join(LOCATION, "../..", "schema_cache/schema-1.1.0.json")
 
 JSON_DATA = """{
   "version": "1.0",
@@ -47,6 +47,7 @@ JSON_DATA = """{
 
 
 def test_decode_str():
+    """Test decoding a JSON string into an OCSF schema."""
     schema = from_json(JSON_DATA)
     assert len(schema.classes) > 0
     assert "authentication" in schema.classes
@@ -54,6 +55,7 @@ def test_decode_str():
 
 
 def test_decode_file():
+    """Test decoding a JSON file into an OCSF schema."""
     json_str: str | None = None
     with open(SCHEMA_JSON, "r") as f:
         json_str = f.read()

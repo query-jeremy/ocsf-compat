@@ -100,7 +100,7 @@ class OcsfEvent(OcsfModel):
 
 @dataclass
 class OcsfSchema(OcsfModel):
-    """The root of an OCSF schema."""
+    """An OCSF schema as represented in the OCSF server's export endpoint."""
 
     version: str
     classes: dict[str, OcsfEvent] = field(default_factory=dict)

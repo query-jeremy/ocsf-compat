@@ -97,6 +97,9 @@ class Rule(ABC, Generic[Context]):
     def __hash__(self):
         return hash(self.__class__)
 
+    def id(self) -> str:
+        return self.__class__.__name__
+
     @abstractmethod
     def metadata(self) -> RuleMetadata:
         """Return metadata describing the rule."""
