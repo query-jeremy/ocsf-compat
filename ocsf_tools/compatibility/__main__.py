@@ -58,6 +58,7 @@ Validate schemata but don't worry about removed enum members:
 import tomllib
 from argparse import ArgumentParser
 from typing import cast
+from urllib.error import URLError
 
 from ocsf_tools.schema import get_schema, OcsfServerClient
 from ocsf_tools.validation import (
@@ -163,8 +164,12 @@ if "after" not in config:
 
 # Load the schemas
 client = OcsfServerClient(cache_dir=config.get("cache", None))
-before = get_schema(config["before"], client)
-after = get_schema(config["after"], client)
+try:
+    before = get_schema(config["before"], client)
+    after = get_schema(config["after"], client)
+except URLError as e:
+    print("Unable to communicate with the OCSF server")
+    exit(1)
 
 # Configure a validator and run it
 validator = CompatibilityValidator(cast(ChangedSchema, compare(before, after)), severities)
