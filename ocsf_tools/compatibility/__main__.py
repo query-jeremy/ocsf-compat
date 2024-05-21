@@ -94,9 +94,9 @@ parser.add_argument("--after", "-a", help="Path to the schema file before the ch
 parser.add_argument("--cache", help="Path to the schema cache directory")
 parser.add_argument("--config", help="Path to the config.toml file")
 parser.add_argument("--info", nargs="*", action="append", help="A finding to assign an info severity to")
-parser.add_argument("--warning", nargs="*", action="append", help="A finding to assign an warning severity to")
+parser.add_argument("--warning", nargs="*", action="append", help="A finding to assign a warning severity to")
 parser.add_argument("--error", nargs="*", action="append", help="A finding to assign an error severity to")
-parser.add_argument("--fatal", nargs="*", action="append", help="A finding to assign an fatal severity to")
+parser.add_argument("--fatal", nargs="*", action="append", help="A finding to assign a fatal severity to")
 parser.add_argument("--color", action="store_true", default=True, help="Enable colored output")
 parser.add_argument("--no-color", dest="color", action="store_false", help="Enable colored output")
 
@@ -173,11 +173,13 @@ except URLError as e:
 
 # Configure a validator and run it
 validator = CompatibilityValidator(cast(ChangedSchema, compare(before, after)), severities)
+results = validator.validate()
+
+# Initialize a formatter
 if not args.color:
     formatter = ValidationFormatter()
 else:
     formatter = ColoringValidationFormatter()
-results = validator.validate()
 
 # Show the results
 print(formatter.format(results))
