@@ -1,20 +1,21 @@
-
-
 from ocsf_tools.validation.validator import Severity, Finding, Rule, RuleMetadata, Validator
 
 
 class FakeContext: ...
 
+
 class FakeFinding(Finding):
     def message(self) -> str:
         return "Test finding message"
-    
+
+
 class FakeRule(Rule[FakeContext]):
     def metadata(self) -> RuleMetadata:
         return RuleMetadata("Test rule")
-    
+
     def validate(self, context: FakeContext) -> list[Finding]:
         return [FakeFinding()]
+
 
 class FakeValidator(Validator[FakeContext]):
     def rules(self) -> list[Rule[FakeContext]]:

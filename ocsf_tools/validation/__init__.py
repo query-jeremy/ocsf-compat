@@ -1,4 +1,5 @@
-from .validator import Rule, Validator, Finding, RuleMetadata, Severity, validate_severities, count_severity
+from .validator import Rule, Validator, Finding, RuleMetadata, Severity, validate_severities
+from .summarize import summarize_findings, count_severity
 from .formatting import ValidationFormatter, ColoringValidationFormatter
 
 
@@ -10,6 +11,7 @@ __all__ = [
     "ValidationFormatter",
     "Validator",
     "count_severity",
+    "summarize_findings",
     "validate_severities",
     "ColoringValidationFormatter",
 ]

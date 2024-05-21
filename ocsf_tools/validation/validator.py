@@ -162,25 +162,6 @@ class Validator(ABC, Generic[Context]):
         return findings
 
 
-def count_severity(findings: ValidationFindings[Context], severity: Severity) -> int:
-    """Count the number of findings with a given severity.
-
-    Args:
-        findings: A mapping of rules to findings as is produced by Validator.validate.
-        severity: The severity level to count.
-
-    Returns:
-        The number of findings with the given severity.
-    """
-    count = 0
-    for rule_findings in findings.values():
-        for finding in rule_findings:
-            if finding.severity == severity:
-                count += 1
-
-    return count
-
-
 def validate_severities(severities: dict[str, Severity]) -> bool:
     """Validate a map of finding class names to severities.
 
@@ -197,5 +178,5 @@ def validate_severities(severities: dict[str, Severity]) -> bool:
     for cls, severity in severities.items():
         if severity not in sevs:
             raise ValueError(f"Invalid severity value: {cls} = {severity}")
-    
+
     return True

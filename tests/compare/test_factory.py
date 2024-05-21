@@ -1,4 +1,3 @@
-
 from ocsf_tools.schema import (
     OcsfSchema,
     OcsfEvent,
@@ -20,6 +19,7 @@ from ocsf_tools.compare.model import (
     ChangedEnumMember,
 )
 from ocsf_tools.compare.factory import create_diff
+
 
 def test_create_diff():
     """Test that the factory creates the correct diff model for each OCSF model."""

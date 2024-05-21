@@ -56,7 +56,11 @@ class RemovedEnumMemberFinding(RemovedRecordFinding):
 
 class NoRemovedRecordsRule(Rule[ChangedSchema]):
     def metadata(self):
-        return RuleMetadata("No removed objects or events")
+        return RuleMetadata(
+            "No removed schema elements",
+            description="Removing event and object types can rather obviously break compatibility between "
+            + "schemas, as can removing attributes of events and objects or members of enumerations.",
+        )
 
     def validate(self, context: ChangedSchema) -> list[Finding]:
         """Search changed objects and events in the schema to identify any removed elements."""

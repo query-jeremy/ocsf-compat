@@ -43,9 +43,9 @@ Validate a schema defined in a file is compatible with 1.0.0 from the OCSF serve
 
 Validate two schema versions available from the OCSF server with a local cache:
 
-    $ python -m ocsf_tools.compatibility --before 1.0.0 --after 1.1.0 --cache ./schema_cache 
+    $ python -m ocsf_tools.compatibility --before 1.0.0 --after 1.1.0 --cache ./schema_cache
 
-Validate schemata using a configuration file: 
+Validate schemata using a configuration file:
 
     $ python -m ocsf_tools.compatibility --config ./config.toml
 
@@ -60,7 +60,13 @@ from argparse import ArgumentParser
 from typing import cast
 
 from ocsf_tools.schema import get_schema, OcsfServerClient
-from ocsf_tools.validation import Severity, ColoringValidationFormatter, validate_severities, count_severity
+from ocsf_tools.validation import (
+    Severity,
+    ColoringValidationFormatter,
+    ValidationFormatter,
+    validate_severities,
+    count_severity,
+)
 from ocsf_tools.compare import compare, ChangedSchema
 
 from .validator import CompatibilityValidator
@@ -90,6 +96,8 @@ parser.add_argument("--info", nargs="*", action="append", help="A finding to ass
 parser.add_argument("--warning", nargs="*", action="append", help="A finding to assign an warning severity to")
 parser.add_argument("--error", nargs="*", action="append", help="A finding to assign an error severity to")
 parser.add_argument("--fatal", nargs="*", action="append", help="A finding to assign an fatal severity to")
+parser.add_argument("--color", action="store_true", default=True, help="Enable colored output")
+parser.add_argument("--no-color", dest="color", action="store_false", help="Enable colored output")
 
 args = parser.parse_args()
 
@@ -160,7 +168,10 @@ after = get_schema(config["after"], client)
 
 # Configure a validator and run it
 validator = CompatibilityValidator(cast(ChangedSchema, compare(before, after)), severities)
-formatter = ColoringValidationFormatter()
+if not args.color:
+    formatter = ValidationFormatter()
+else:
+    formatter = ColoringValidationFormatter()
 results = validator.validate()
 
 # Show the results
