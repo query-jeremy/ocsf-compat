@@ -59,7 +59,8 @@ class NoRemovedRecordsRule(Rule[ChangedSchema]):
         return RuleMetadata(
             "No removed schema elements",
             description="Removing event and object types can rather obviously break compatibility between "
-            + "schemas, as can removing attributes of events and objects or members of enumerations.",
+            + "schemas, as can removing attributes of events and objects or members of enumerations. Instead"
+            + " of removing these elements, consider deprecating them instead.",
         )
 
     def validate(self, context: ChangedSchema) -> list[Finding]:
