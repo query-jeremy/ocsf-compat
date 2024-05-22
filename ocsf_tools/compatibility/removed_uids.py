@@ -12,12 +12,16 @@ class ChangedClassUidFinding(Finding):
     after: str
 
     def message(self) -> str:
-        return f"The UID of {self.event} changed from {self.before} to {self.after}"
+        return f"The Class ID of {self.event} changed from {self.before} to {self.after}"
 
+_RULE_DESCRIPTION = """Class IDs are meant to be static identifiers for event
+classes. They should never change. The most common cause of a changed class ID
+is because the class was moved to a new category or from an extension to
+core."""
 
 class NoChangedClassUidsRule(Rule[ChangedSchema]):
     def metadata(self):
-        return RuleMetadata("No changed class UIDs")
+        return RuleMetadata("No changed class UIDs", description=_RULE_DESCRIPTION)
 
     def validate(self, context: ChangedSchema) -> list[Finding]:
         findings: list[Finding] = []

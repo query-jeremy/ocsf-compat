@@ -177,14 +177,20 @@ validator = CompatibilityValidator(cast(ChangedSchema, compare(before, after)), 
 results = validator.validate()
 
 print()
-print(colored("OCSF Compatibility Validator", "white"))
+if not args.color:
+    print(" OCSF Compatibility Validator ")
+    print("=" * 30)
+else:
+    print(colored(" OCSF Compatibility Validator", "white"))
+    print(colored("=" * 30, "magenta"))
+
 print()
 print("Validate backwards compatibility between two OCSF schemas.\n")
 print(
     "For more information about breaking changes in OCSF, see the Schema FAQ:\n  https://github.com/ocsf/ocsf-docs/blob/main/FAQs/Schema%20FAQ.md\n"
 )
 
-print(f"Looking for breaking changes between {before.version} and {after.version}")
+print(f"Looking for breaking changes between ocsf-schema-{before.version} and ocsf-schema-{after.version}.")
 print()
 
 # Initialize a formatter

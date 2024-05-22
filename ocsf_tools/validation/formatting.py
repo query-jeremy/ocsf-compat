@@ -11,9 +11,8 @@ class ValidationFormatter:
         return f"  [{finding.severity.upper()}] {finding.message()}"
 
     def _heading(self, text: str) -> str:
-        heading = "=" * (len(text) * 2) + "\n"
         heading += f" {text}\n"
-        heading += "=" * (len(text) * 2) + "\n"
+        heading += "-" * (len(text) * 2) + "\n"
         return heading
 
     def format(self, findings: ValidationFindings[Context], summarize: bool = True) -> str:

@@ -20,14 +20,12 @@ class ChangedTypeFinding(Finding):
             + f"changed from {self.before} to {self.after}"
         )
 
-
+_RULE_DESCRIPTION="""Changing the type of an attribute can break backwards
+compatibility in some encodings, so any change to an attribute's data type is
+considered breaking."""
 class NoChangedTypesRule(Rule[ChangedSchema]):
     def metadata(self):
-        return RuleMetadata(
-            "No changed attribute types",
-            "Changing the type of an attribute can break backwards compatibility in some encodings, "
-            + "so any change to an attribute's data type is considered breaking.",
-        )
+        return RuleMetadata("No changed attribute types", description=_RULE_DESCRIPTION)
 
     def validate(self, context: ChangedSchema) -> list[Finding]:
         findings: list[Finding] = []
