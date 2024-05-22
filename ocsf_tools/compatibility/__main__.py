@@ -59,6 +59,7 @@ import tomllib
 from argparse import ArgumentParser
 from typing import cast
 from urllib.error import URLError
+from termcolor import colored
 
 from ocsf_tools.schema import get_schema, OcsfServerClient
 from ocsf_tools.validation import (
@@ -167,13 +168,24 @@ client = OcsfServerClient(cache_dir=config.get("cache", None))
 try:
     before = get_schema(config["before"], client)
     after = get_schema(config["after"], client)
-except URLError as e:
+except URLError:
     print("Unable to communicate with the OCSF server")
     exit(1)
 
 # Configure a validator and run it
 validator = CompatibilityValidator(cast(ChangedSchema, compare(before, after)), severities)
 results = validator.validate()
+
+print()
+print(colored("OCSF Compatibility Validator", "white"))
+print()
+print("Validate backwards compatibility between two OCSF schemas.\n")
+print(
+    "For more information about breaking changes in OCSF, see the Schema FAQ:\n  https://github.com/ocsf/ocsf-docs/blob/main/FAQs/Schema%20FAQ.md\n"
+)
+
+print(f"Looking for breaking changes between {before.version} and {after.version}")
+print()
 
 # Initialize a formatter
 if not args.color:

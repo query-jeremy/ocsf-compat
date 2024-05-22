@@ -114,8 +114,8 @@ OcsfT = TypeVar("OcsfT", bound=OcsfModel, covariant=True)
 
 
 class OcsfElementType(StrEnum):
-    EVENT = "Event"
-    OBJECT = "Object"
-    ENUM_MEMBER = "Enum Member"
-    ATTRIBUTE = "Attribute"
-    TYPE = "Type"
+    EVENT = "event"
+    OBJECT = "object"
+    ENUM_MEMBER = "enum"
+    ATTRIBUTE = "attribute"
+    TYPE = "type"
