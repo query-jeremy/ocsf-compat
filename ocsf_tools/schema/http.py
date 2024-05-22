@@ -161,9 +161,11 @@ class OcsfServerClient:
 
         # Cache the schema.
         if self._cache_dir is not None:
-            dest = str(self._cache_dir / f"schema-{schema.version}.json")
-            LOG.debug(f"Caching schema to {dest}")
-            to_file(schema, dest)
+            ver = Version.parse(schema.version)
+            if ver.prerelease != "dev":
+                dest = str(self._cache_dir / f"schema-{schema.version}.json")
+                LOG.debug(f"Caching schema to {dest}")
+                to_file(schema, dest)
 
         return schema
 
