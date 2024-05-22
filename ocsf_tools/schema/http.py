@@ -12,7 +12,6 @@ schema = OcsfServerClient(cache_dir="./schema_cache").get_schema("1.1.0")
 TODO:
 - This client is synchronous and only covers a small subset of the OCSF server's
   API. This could be replaced with a more robust OpenAPI client.
-- Cache TTLs for `-dev` versions.
 """
 
 import logging
