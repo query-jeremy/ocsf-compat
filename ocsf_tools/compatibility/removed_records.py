@@ -16,6 +16,22 @@ from ocsf_tools.compare import ChangedSchema, Removal, Addition, ChangedEvent, C
 from ocsf_tools.validation import Rule, Finding, RuleMetadata
 
 
+def _path(
+    root: Literal[OcsfElementType.OBJECT] | Literal[OcsfElementType.EVENT],
+    name: str,
+    path: Optional[str | tuple[str, ...]],
+) -> str:
+    """Format a path to a schema element."""
+    path_str = root + ":"
+    if path is not None:
+        if isinstance(path, tuple):
+            path_str += ".".join(path)
+        else:
+            path_str += "path"
+        path_str += "."
+    return f"{path_str}{name}"
+
+
 @dataclass
 class RemovedRecordFinding(Finding):
     """A finding for a removed object, event, attribute, or enum member."""
@@ -28,14 +44,8 @@ class RemovedRecordFinding(Finding):
     def _root(self) -> Literal[OcsfElementType.EVENT] | Literal[OcsfElementType.OBJECT]:
         return self.root
 
-    def _path(self) -> str:
-        path = self._root() + ":"
-        if self.path is not None:
-            path += ".".join(self.path)
-        return f"{path}.{self.name}"
-
     def message(self) -> str:
-        return f"{self._path()} ({self.caption}) was removed"
+        return f"{_path(self._root(), self.name, self.path)} ({self.caption}) was removed"
 
 
 class RemovedEventFinding(RemovedRecordFinding): ...
@@ -65,17 +75,8 @@ class RenamedRecordFinding(Finding):
     def _root(self) -> Literal[OcsfElementType.EVENT] | Literal[OcsfElementType.OBJECT]:
         return self.root
 
-    def _path(self, before: bool = True) -> str:
-        path = self._root() + ":"
-        if self.path is not None:
-            path += ".".join(self.path)
-        if before:
-            return f"{path}.{self.before}"
-        else:
-            return f"{path}.{self.after}"
-
     def message(self) -> str:
-        return f"{self._path(True)} ({self.caption}) appears to have been renamed to {self._path(False)}"
+        return f"{_path(self._root(), self.before, self.path)} ({self.caption}) appears to have been renamed to {_path(self._root(), self.after, self.path)}"
 
 
 class RenamedEventFinding(RenamedRecordFinding): ...
@@ -105,7 +106,7 @@ class NoRemovedRecordsRule(Rule[ChangedSchema]):
     """A rule to identify removed or renamed objects, events, attributes, and enums."""
 
     def metadata(self):
-        return RuleMetadata("No removed schema elements", description=_RULE_DESCRIPTION)
+        return RuleMetadata("No removed or renamed schema elements", description=_RULE_DESCRIPTION)
 
     def validate(self, context: ChangedSchema) -> list[Finding]:
         """Search changed objects and events in the schema to identify any removed or renamed elements."""
