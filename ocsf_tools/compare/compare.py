@@ -101,7 +101,8 @@ def is_optional_dict(
 
     if isinstance(value, dict):
         return True
-    if origin != Union or len(args) != 2:
+
+    if (origin != Union and origin != UnionType) or len(args) != 2:
         return False
 
     for arg in args:

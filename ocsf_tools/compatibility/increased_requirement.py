@@ -19,11 +19,13 @@ class IncreasedRequirementFinding(Finding):
             + f" from {self.before} to {self.after}"
         )
 
+
 _RULE_DESCRIPTION = """When the requirement of an attribute changes from
 optional or recommended to required, previously valid records may no longer be
 valid, breaking backwards compatibility. If you wish to increase the strength of
 the requirement, you may change the requirement from optional to recommended
 without breaking backwards compatibility."""
+
 
 class NoIncreasedRequirementsRule(Rule[ChangedSchema]):
     def metadata(self):

@@ -11,7 +11,7 @@ class ValidationFormatter:
         return f"  [{finding.severity.upper()}] {finding.message()}"
 
     def _heading(self, text: str) -> str:
-        heading += f" {text}\n"
+        heading = f" {text}\n"
         heading += "-" * (len(text) * 2) + "\n"
         return heading
 

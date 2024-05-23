@@ -36,7 +36,7 @@ def keys_to_names(d: dict[str, Any]) -> dict[str, Any]:
         if k in _KEY_TRANSFORMS:
             ops.append((k, _KEY_TRANSFORMS[k]))
 
-        elif isinstance(v, dict):
+        if isinstance(v, dict):
             d[k] = keys_to_names(cast(dict[str, Any], v))
 
     for op in ops:
@@ -53,7 +53,7 @@ def names_to_keys(d: dict[str, Any]) -> dict[str, Any]:
             d[_NAME_TRANSFORMS[k]] = d[k]
             del d[k]
 
-        elif isinstance(k, dict):
+        if isinstance(k, dict):
             d[k] = names_to_keys(v)
 
     return d
